@@ -1,0 +1,4 @@
+glob:*.user
+relre:[Bb]in
+relre:obj
+glob:*.suo
