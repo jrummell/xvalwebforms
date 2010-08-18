@@ -281,8 +281,8 @@ namespace xVal.WebForms
         /// </summary>
         public void RegisterValidationScriptIfClientScriptEnabled()
         {
-            // don't add client validation script if client script isn't enabled.
-            if (!EnableClientScript)
+            // don't add client validation script if client script isn't enabled or visible.
+            if (!EnableClientScript || !Visible)
             {
                 return;
             }
