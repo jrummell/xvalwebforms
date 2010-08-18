@@ -3,9 +3,7 @@
 *
 * Created by Carlos Mendible
 * 
-* Dual licensed under the MIT and GPL licenses:
-*   http://www.opensource.org/licenses/mit-license.php
-*   http://www.gnu.org/licenses/gpl.html
+* License: Microsoft Public License (Ms-PL) (http://www.opensource.org/licenses/ms-pl.html)
 */
 
 // Function to enable the CauseValidation behavior for ASP.NET
