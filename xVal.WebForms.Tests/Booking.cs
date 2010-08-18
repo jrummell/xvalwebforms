@@ -9,6 +9,7 @@ namespace xVal.WebForms.Tests
         public const string NumberOfGuestsRequiredMessage = "Number of guests must be between 1 and 20";
         public const string ArrivalDateRequiredMessage = "Arrival date is required";
         public const string ArrivalDateDataTypeMessage = "The arrival date must be in the form of mm/dd/yyyy";
+        public const string DepartureDateDataTypeMessage = "The departure date must be in the form of mm/dd/yyyy";
 
         [Required(ErrorMessage = ClientNameRequiredMessage)]
         [StringLength(15)]
@@ -20,5 +21,8 @@ namespace xVal.WebForms.Tests
         [Required(ErrorMessage = ArrivalDateRequiredMessage)]
         [DataType(DataType.Date, ErrorMessage = ArrivalDateDataTypeMessage)]
         public DateTime ArrivalDate { get; set; }
+
+        [DataType(DataType.Date, ErrorMessage = DepartureDateDataTypeMessage)]
+        public DateTime? DepartureDate { get; set; }
     }
 }

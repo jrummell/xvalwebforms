@@ -168,9 +168,19 @@ namespace xVal.WebForms
                 // get the value of the input control
                 string valueString = _controlValueResolver.GetControlValue(modelProperty.ControlToValidate);
                 object value;
+
+                // get the underlying type of the nullable type (get int from int?).
+                Type nullablePropertyType = Nullable.GetUnderlyingType(property.PropertyType);
                 try
                 {
-                    value = Convert.ChangeType(valueString, property.PropertyType);
+                    if (nullablePropertyType != null)
+                    {
+                        value = Convert.ChangeType(valueString, nullablePropertyType);
+                    }
+                    else
+                    {
+                        value = Convert.ChangeType(valueString, property.PropertyType);
+                    }
                 }
                 catch (FormatException)
                 {

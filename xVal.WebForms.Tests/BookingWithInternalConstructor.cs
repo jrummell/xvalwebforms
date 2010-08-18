@@ -22,5 +22,8 @@ namespace xVal.WebForms.Tests
         [Required(ErrorMessage = "Arrival date is required")]
         [DataType(DataType.Date, ErrorMessage = "The arrival date must be in the form of mm/dd/yyyy")]
         public DateTime ArrivalDate { get; set; }
+
+        [DataType(DataType.Date, ErrorMessage = "The departure date must be in the form of mm/dd/yyyy")]
+        public DateTime? DepartureDate { get; set; }
     }
 }
