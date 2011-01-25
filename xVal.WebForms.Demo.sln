@@ -1,13 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Web Developer Express 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms.Demo", "xVal.WebForms.Demo\xVal.WebForms.Demo.csproj", "{FF3CE498-9544-4518-A569-88D8CA3EADCC}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms", "xVal.WebForms\xVal.WebForms.csproj", "{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}"
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "xVal.WebForms.Demo.WebSite", "xVal.WebForms.Demo.WebSite\", "{84A10D71-D828-4462-B5BB-6AF120222BCA}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFramework = "3.5"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		ProjectReferences = "{FF3CE498-9544-4518-A569-88D8CA3EADCC}|xVal.WebForms.Demo.dll;{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}|xVal.WebForms.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/xVal.WebForms.Demo.WebSite"
 		Debug.AspNetCompiler.PhysicalPath = "xVal.WebForms.Demo.WebSite\"
@@ -32,10 +30,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FF3CE498-9544-4518-A569-88D8CA3EADCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF3CE498-9544-4518-A569-88D8CA3EADCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF3CE498-9544-4518-A569-88D8CA3EADCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF3CE498-9544-4518-A569-88D8CA3EADCC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
