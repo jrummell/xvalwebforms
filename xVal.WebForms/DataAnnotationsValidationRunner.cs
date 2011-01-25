@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -23,6 +24,18 @@ namespace xVal.WebForms
                    from attribute in prop.Attributes.OfType<ValidationAttribute>()
                    where !attribute.IsValid(prop.GetValue(instance))
                    select new ErrorInfo(prop.Name, attribute.FormatErrorMessage(string.Empty), instance);
+        }
+
+        /// <summary>
+        /// Gets the validators.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
+        public static IEnumerable<ValidationAttribute> GetValidators(Type type)
+        {
+            return from prop in TypeDescriptor.GetProperties(type).Cast<PropertyDescriptor>()
+                   from attribute in prop.Attributes.OfType<ValidationAttribute>()
+                   select attribute;
         }
     }
 }
