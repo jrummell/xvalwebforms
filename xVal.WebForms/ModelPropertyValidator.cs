@@ -7,17 +7,17 @@ using System.Web.UI.WebControls;
 
 namespace xVal.WebForms
 {
-    public class ModelPropertyValidator : BaseValidator, INamingContainer
+    public class ModelPropertyValidator : BaseValidator
     {
         private Type _modelType;
 
         /// <summary>
-        /// Gets or sets the name of the type.
+        /// Gets or sets the type of the model.
         /// </summary>
         /// <value>
-        /// The name of the type.
+        /// The type of the model.
         /// </value>
-        public string TypeName { get; set; }
+        public string ModelType { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the property.
@@ -50,6 +50,12 @@ namespace xVal.WebForms
             return true;
         }
 
+        protected override void Render(HtmlTextWriter writer)
+        {
+            // only render the child validator controls
+            RenderChildren(writer);
+        }
+
         /// <summary>
         /// Called by the ASP.NET page framework to notify server controls that use composition-based implementation to create any child controls they contain in preparation for posting back or rendering.
         /// </summary>
@@ -57,7 +63,12 @@ namespace xVal.WebForms
         {
             _modelType = GetModelType();
 
-            IEnumerable<ValidationAttribute> attributes = DataAnnotationsValidationRunner.GetValidators(_modelType);
+            if (String.IsNullOrEmpty(PropertyName))
+            {
+                throw new InvalidOperationException("PropertyName must be set.");
+            }
+
+            IEnumerable<ValidationAttribute> attributes = DataAnnotationsValidationRunner.GetValidators(_modelType, PropertyName);
             foreach (ValidationAttribute attribute in attributes)
             {
                 Type attributeType = attribute.GetType();
@@ -86,7 +97,7 @@ namespace xVal.WebForms
 
                     //TODO: CompareValidator or ReqularExpressionValidator
 
-                    ValidationDataType validationDataType;
+                    ValidationDataType? validationDataType = null;
 
                     switch (dataTypeAttribute.DataType)
                     {
@@ -123,6 +134,15 @@ namespace xVal.WebForms
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
+                    }
+
+                    if (validationDataType != null)
+                    {
+                        validator = new CompareValidator
+                                        {
+                                            Operator = ValidationCompareOperator.DataTypeCheck,
+                                            Type = validationDataType.Value
+                                        };
                     }
                 }
                 else if (attributeType == typeof (RangeAttribute))
@@ -163,15 +183,34 @@ namespace xVal.WebForms
 
                 if (validator != null)
                 {
-                    validator.ID = ID + "_val" + (Controls.Count + 1);
-                    validator.ControlToValidate = ControlToValidate;
-                    validator.Display = Display;
-                    validator.ValidationGroup = ValidationGroup;
-                    validator.ErrorMessage = attribute.ErrorMessage;
+                    PrepareValidator(validator, attribute);
 
                     Controls.Add(validator);
                 }
             }
+        }
+
+        private void PrepareValidator(BaseValidator validator, ValidationAttribute attribute)
+        {
+            validator.ID = ID + "_modelValidator" + (Controls.Count + 1);
+            validator.ControlToValidate = ControlToValidate;
+            validator.Display = Display;
+            validator.ValidationGroup = ValidationGroup;
+            validator.CssClass = CssClass;
+
+            // try the ErrorMessage property first, then attribute error message
+            string errorMessage = null;
+            if (!String.IsNullOrEmpty(ErrorMessage))
+            {
+                errorMessage = ErrorMessage;
+            }
+            else if (attribute != null)
+            {
+                errorMessage = attribute.ErrorMessage;
+            }
+
+            validator.ErrorMessage = errorMessage;
+            validator.Text = !String.IsNullOrEmpty(Text) ? Text : errorMessage;
         }
 
         /// <summary>
@@ -182,22 +221,22 @@ namespace xVal.WebForms
         {
             if (_modelType == null)
             {
-                if (String.IsNullOrEmpty(TypeName))
+                if (String.IsNullOrEmpty(ModelType))
                 {
-                    throw new InvalidOperationException("TypeName must be set.");
+                    throw new InvalidOperationException("ModelType must be set.");
                 }
 
-                _modelType = Type.GetType(TypeName);
+                _modelType = Type.GetType(ModelType);
 
                 if (_modelType == null)
                 {
                     // App_Code Types are created with System.Web.Compilation.BuildManager
-                    _modelType = BuildManager.GetType(TypeName, false);
+                    _modelType = BuildManager.GetType(ModelType, false);
                 }
 
                 if (_modelType == null)
                 {
-                    throw new InvalidOperationException("Could not get a Type from " + TypeName);
+                    throw new InvalidOperationException("Could not get a Type from " + ModelType);
                 }
             }
 

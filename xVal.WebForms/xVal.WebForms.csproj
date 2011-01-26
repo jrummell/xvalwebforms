@@ -79,6 +79,7 @@
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="ControlValueResolver.cs" />
     <Compile Include="DataAnnotationsValidationRunner.cs" />
+    <Compile Include="ModelObjectValidator.cs" />
     <Compile Include="ModelProperty.cs" />
     <Compile Include="ModelPropertyCollection.cs" />
     <Compile Include="ModelPropertyValidator.cs" />
