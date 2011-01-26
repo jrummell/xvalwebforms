@@ -30,10 +30,12 @@ namespace xVal.WebForms
         /// Gets the validators.
         /// </summary>
         /// <param name="type">The type.</param>
+        /// <param name="propertyName">The property name.</param>
         /// <returns></returns>
-        public static IEnumerable<ValidationAttribute> GetValidators(Type type)
+        public static IEnumerable<ValidationAttribute> GetValidators(Type type, string propertyName)
         {
             return from prop in TypeDescriptor.GetProperties(type).Cast<PropertyDescriptor>()
+                   where prop.Name == propertyName
                    from attribute in prop.Attributes.OfType<ValidationAttribute>()
                    select attribute;
         }

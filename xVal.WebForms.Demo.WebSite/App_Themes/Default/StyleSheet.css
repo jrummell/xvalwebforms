@@ -12,9 +12,25 @@
     border: 1px solid #ff0000;
     background-color: #ffeeee;
 }
+.success, .validation-summary, .validator
+{
+    border: 1px solid;
+}
 .success
 {
-    padding: .5em;
-    border: solid 1px Green;
-    color: Green;
+    color: #4F8A10;
+    background-color: #DFF2BF;
+}
+.validation-summary, .validator
+{
+    color: #D8000C;
+    background-color: #FFBABA;
+}
+.validation-summary, .success
+{
+    padding: 0.5em;
+}
+.validator
+{
+    padding: 2px;
 }

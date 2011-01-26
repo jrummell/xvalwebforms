@@ -6,31 +6,36 @@
     <title>xVal.WebForms Demo</title>
 </head>
 <body>
-    <script src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.3.2.min.js" type="text/javascript"></script>
-    <script src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"
-        type="text/javascript"></script>
-    <script src="js/ClientSidePlugins/xVal.jquery.validate.js" type="text/javascript"></script>
-    <script src="js/ClientSidePlugins/xVal.WebForms.jquery.validate.js" type="text/javascript"></script>
     <form id="form1" runat="server">
     <div id="divForm" runat="server">
         <fieldset class="booking">
             <legend>Booking</legend>
-            <asp:ValidationSummary ID="valSummary" runat="server" />
+            <asp:ValidationSummary ID="valSummary" runat="server" CssClass="validation-summary" />
             <label for="txtClientName">
                 Your name:</label>
             <asp:TextBox ID="txtClientName" runat="server" />
-            <val:ModelPropertyValidator ID="valClientName" runat="server" ControlToValidate="txtClientName"
-                Display="Dynamic" PropertyName="ClientName" TypeName="xVal.WebForms.Demo.Booking" />
+            <val:ModelPropertyValidator ID="valClientName" runat="server" CssClass="validator"
+                ControlToValidate="txtClientName" Display="Dynamic" PropertyName="ClientName"
+                ModelType="xVal.WebForms.Demo.Booking" />
             <label for="txtNumberOfGuests">
                 Number of guests:</label>
             <asp:TextBox ID="txtNumberOfGuests" runat="server" />
-            <val:ModelPropertyValidator ID="valNumberOfGuests" runat="server" ControlToValidate="txtNumberOfGuests"
-                Display="Dynamic" PropertyName="NumberOfGuests" TypeName="xVal.WebForms.Demo.Booking" />
+            <val:ModelPropertyValidator ID="valNumberOfGuests" runat="server" CssClass="validator"
+                ControlToValidate="txtNumberOfGuests" Display="Dynamic" PropertyName="NumberOfGuests"
+                ModelType="xVal.WebForms.Demo.Booking" />
             <label for="txtArrivalDate">
                 Arrival date:</label>
             <asp:TextBox ID="txtArrivalDate" runat="server" />
-            <val:ModelPropertyValidator ID="valArrivalDate" runat="server" ControlToValidate="txtArrivalDate"
-                Display="Dynamic" PropertyName="ArrivalDate" TypeName="xVal.WebForms.Demo.Booking" />
+            <val:ModelPropertyValidator ID="valArrivalDate" runat="server" CssClass="validator"
+                ControlToValidate="txtArrivalDate" Display="Dynamic" PropertyName="ArrivalDate"
+                ModelType="xVal.WebForms.Demo.Booking" />
+            <br />
+            <val:ModelObjectValidator ID="valBooking" runat="server" CssClass="validator" Display="Dynamic"
+                ModelType="xVal.WebForms.Demo.Booking">
+                <ModelProperties>
+                    <val:ModelProperty PropertyName="ArrivalDate" ControlToValidate="txtArrivalDate" />
+                </ModelProperties>
+            </val:ModelObjectValidator>
             <div>
                 <asp:Button ID="btnSubmit" runat="server" Text="Submit" OnClick="btnSubmit_Click" /></div>
         </fieldset>
