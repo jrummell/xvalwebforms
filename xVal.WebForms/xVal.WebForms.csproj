@@ -93,6 +93,7 @@
     <Compile Include="ValidationGroups.cs" />
     <Compile Include="ValidationScriptManager.cs" />
     <Compile Include="ValidationSummaryOptions.cs" />
+    <Compile Include="ValidatorControlFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ClientSidePlugins\xVal.jquery.validate.js" />

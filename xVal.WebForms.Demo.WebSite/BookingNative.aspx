@@ -29,6 +29,12 @@
             <val:ModelPropertyValidator ID="valArrivalDate" runat="server" CssClass="validator"
                 ControlToValidate="txtArrivalDate" Display="Dynamic" PropertyName="ArrivalDate"
                 ModelType="xVal.WebForms.Demo.Booking" />
+            <label for="txtEmailAddress">
+                Email address:</label>
+            <asp:TextBox ID="txtEmailAddress" runat="server" />
+            <val:ModelPropertyValidator ID="valEmailAddress" runat="server" CssClass="validator"
+                ControlToValidate="txtEmailAddress" Display="Dynamic" PropertyName="EmailAddress"
+                ModelType="xVal.WebForms.Demo.Booking" />
             <br />
             <val:ModelObjectValidator ID="valBooking" runat="server" CssClass="validator" Display="Dynamic"
                 ModelType="xVal.WebForms.Demo.Booking">

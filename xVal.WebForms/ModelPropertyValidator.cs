@@ -9,6 +9,7 @@ namespace xVal.WebForms
 {
     public class ModelPropertyValidator : BaseValidator
     {
+        private readonly ValidatorControlFactory _validatorFactory = new ValidatorControlFactory();
         private Type _modelType;
 
         /// <summary>
@@ -71,115 +72,7 @@ namespace xVal.WebForms
             IEnumerable<ValidationAttribute> attributes = DataAnnotationsValidationRunner.GetValidators(_modelType, PropertyName);
             foreach (ValidationAttribute attribute in attributes)
             {
-                Type attributeType = attribute.GetType();
-
-                BaseValidator validator = null;
-                if (attributeType == typeof (RequiredAttribute))
-                {
-                    validator = new RequiredFieldValidator();
-                }
-                else if (attributeType == typeof (StringLengthAttribute))
-                {
-                    //TODO: set MaxLength on TextBox?
-                }
-                else if (attributeType == typeof (EnumDataTypeAttribute))
-                {
-                    //TODO: Enum type?
-                    validator = new CompareValidator
-                                    {
-                                        Operator = ValidationCompareOperator.DataTypeCheck,
-                                        Type = ValidationDataType.Integer
-                                    };
-                }
-                else if (attributeType == typeof (DataTypeAttribute))
-                {
-                    DataTypeAttribute dataTypeAttribute = (DataTypeAttribute) attribute;
-
-                    //TODO: CompareValidator or ReqularExpressionValidator
-
-                    ValidationDataType? validationDataType = null;
-
-                    switch (dataTypeAttribute.DataType)
-                    {
-                        case DataType.Custom:
-                            break;
-                        case DataType.DateTime:
-                        case DataType.Date:
-                            validationDataType = ValidationDataType.Date;
-                            break;
-                        case DataType.Time:
-                            break;
-                        case DataType.Duration:
-                            break;
-                        case DataType.PhoneNumber:
-                            break;
-                        case DataType.Currency:
-                            validationDataType = ValidationDataType.Currency;
-                            break;
-                        case DataType.Text:
-                            validationDataType = ValidationDataType.String;
-                            break;
-                        case DataType.Html:
-                            break;
-                        case DataType.MultilineText:
-                            validationDataType = ValidationDataType.String;
-                            break;
-                        case DataType.EmailAddress:
-                            break;
-                        case DataType.Password:
-                            break;
-                        case DataType.Url:
-                            break;
-                        case DataType.ImageUrl:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                    if (validationDataType != null)
-                    {
-                        validator = new CompareValidator
-                                        {
-                                            Operator = ValidationCompareOperator.DataTypeCheck,
-                                            Type = validationDataType.Value
-                                        };
-                    }
-                }
-                else if (attributeType == typeof (RangeAttribute))
-                {
-                    RangeAttribute rangeAttribute = (RangeAttribute) attribute;
-
-                    // String is the default type.
-                    ValidationDataType dataType = ValidationDataType.String;
-                    if (rangeAttribute.OperandType == typeof (int))
-                    {
-                        dataType = ValidationDataType.Integer;
-                    }
-                    else if (rangeAttribute.OperandType == typeof (double))
-                    {
-                        dataType = ValidationDataType.Double;
-                    }
-                    else if (rangeAttribute.OperandType == typeof (DateTime))
-                    {
-                        dataType = ValidationDataType.Date;
-                    }
-
-                    validator = new RangeValidator
-                                    {
-                                        Type = dataType,
-                                        MinimumValue = rangeAttribute.Minimum.ToString(),
-                                        MaximumValue = rangeAttribute.Maximum.ToString()
-                                    };
-                }
-                else if (attributeType == typeof (RegularExpressionAttribute))
-                {
-                    RegularExpressionAttribute regexAttribute = (RegularExpressionAttribute) attribute;
-
-                    validator = new RegularExpressionValidator
-                                    {
-                                        ValidationExpression = regexAttribute.Pattern
-                                    };
-                }
+                BaseValidator validator = _validatorFactory.CreateValidator(attribute);
 
                 if (validator != null)
                 {
