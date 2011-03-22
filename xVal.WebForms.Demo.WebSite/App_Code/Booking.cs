@@ -14,8 +14,12 @@ namespace xVal.WebForms.Demo
         public int NumberOfGuests { get; set; }
 
         [Required(ErrorMessage = "Arrival Date is required.")]
-        [DataType(DataType.Date, ErrorMessage = "Arrival Date must be a valid date.")]
+        [DataType(DataType.Date, ErrorMessage = "Arrival Date is invalid.")]
         public DateTime ArrivalDate { get; set; }
+
+        [Required(ErrorMessage = "Email Address is required.")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Email Address is invalid.")]
+        public string EmailAddress { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
