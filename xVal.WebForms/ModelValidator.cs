@@ -179,7 +179,14 @@ namespace xVal.WebForms
                     }
                     else
                     {
-                        value = Convert.ChangeType(valueString, property.PropertyType);
+                        if (property.PropertyType.IsEnum)
+                        {
+                            value = Enum.Parse(property.PropertyType, valueString);
+                        }
+                        else
+                        {
+                            value = Convert.ChangeType(valueString, property.PropertyType);
+                        }
                     }
                 }
                 catch (FormatException)

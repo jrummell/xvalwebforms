@@ -18,12 +18,15 @@ public partial class BookingDemoMaster : Page
             txtNumberOfGuests.Text = "1";
         }
 
-        Booking booking = new Booking
-                              {
-                                  ClientName = txtClientName.Text,
-                                  NumberOfGuests = Convert.ToInt32(txtNumberOfGuests.Text),
-                                  ArrivalDate = Convert.ToDateTime(txtArrivalDate.Text)
-                              };
+        Booking booking =
+            new Booking
+                {
+                    ClientName = txtClientName.Text,
+                    NumberOfGuests = Convert.ToInt32(txtNumberOfGuests.Text),
+                    ArrivalDate = Convert.ToDateTime(txtArrivalDate.Text),
+                    SmokingType =
+                        (SmokingType) Enum.Parse(typeof (SmokingType), ddlSmokingType.SelectedValue)
+                };
 
         try
         {

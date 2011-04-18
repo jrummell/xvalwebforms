@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Web Developer Express 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms", "xVal.WebForms\xVal.WebForms.csproj", "{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms.Tests", "xVal.WebForms.Tests\xVal.WebForms.Tests.csproj", "{CC3B66CE-C156-4611-AD9E-FFF0D11D1CA4}"
@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms.Demo", "xVal.
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "xVal.WebForms.Demo.WebSite", "xVal.WebForms.Demo.WebSite\", "{25840A9E-17F8-4290-9101-DCD1B5BA1760}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFramework = "3.5"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
 		ProjectReferences = "{FF3CE498-9544-4518-A569-88D8CA3EADCC}|xVal.WebForms.Demo.dll;{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}|xVal.WebForms.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/xVal.WebForms.Demo.WebSite"
 		Debug.AspNetCompiler.PhysicalPath = "xVal.WebForms.Demo.WebSite\"
