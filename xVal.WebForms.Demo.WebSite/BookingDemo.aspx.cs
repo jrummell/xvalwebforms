@@ -19,11 +19,12 @@ public partial class BookingDemo : Page
         }
 
         Booking booking = new Booking
-                              {
-                                  ClientName = txtClientName.Text,
-                                  NumberOfGuests = Convert.ToInt32(txtNumberOfGuests.Text),
-                                  ArrivalDate = Convert.ToDateTime(txtArrivalDate.Text)
-                              };
+        {
+            ClientName = txtClientName.Text,
+            NumberOfGuests = Convert.ToInt32(txtNumberOfGuests.Text),
+            ArrivalDate = Convert.ToDateTime(txtArrivalDate.Text),
+            EmailAddress = txtEmailAddress.Text
+        };
 
         try
         {
