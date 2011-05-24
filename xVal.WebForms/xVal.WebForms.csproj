@@ -65,7 +65,6 @@
     <Compile Include="DataAnnotationsValidationRunner.cs" />
     <Compile Include="ModelProperty.cs" />
     <Compile Include="ModelPropertyCollection.cs" />
-    <Compile Include="ModelPropertyValidator.cs" />
     <Compile Include="ModelValidator.cs" />
     <Compile Include="PageValidatorCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
