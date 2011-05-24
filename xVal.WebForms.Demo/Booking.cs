@@ -24,9 +24,5 @@ namespace xVal.WebForms.Demo
 
         [Required(ErrorMessage = "Smoking type is requried.")]
         public SmokingType SmokingType { get; set; }
-
-        [Required(ErrorMessage = "Email address is required.")]
-        [DataType(DataType.EmailAddress)]
-        public string EmailAddress { get; set; }
     }
 }
