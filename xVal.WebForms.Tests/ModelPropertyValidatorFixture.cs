@@ -3,8 +3,8 @@
 namespace xVal.WebForms.Tests
 {
     [TestFixture]
-    public class ModelValidatorFixture
+    public class ModelPropertyValidatorFixture
     {
-        //TODO: ModelValidatorFixture
+        //TODO: ModelPropertyValidatorFixture
     }
 }

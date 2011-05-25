@@ -10,12 +10,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>xVal.WebForms</RootNamespace>
     <AssemblyName>xVal.WebForms</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -54,34 +55,17 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="xVal, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\xVal\xVal.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControlExtensions.cs" />
-    <Compile Include="ControlValueResolver.cs" />
     <Compile Include="DataAnnotationsValidationRunner.cs" />
-    <Compile Include="ModelProperty.cs" />
-    <Compile Include="ModelPropertyCollection.cs" />
+    <Compile Include="IValidationRunner.cs" />
     <Compile Include="ModelPropertyValidator.cs" />
     <Compile Include="ModelValidator.cs" />
-    <Compile Include="PageValidatorCollection.cs" />
+    <Compile Include="ModelValidatorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Html\JsonControlValidationConfigFormatter.cs" />
-    <Compile Include="RuleProviders\ControlRuleSet.cs" />
-    <Compile Include="RuleProviders\ControlRuleSetKey.cs" />
     <Compile Include="ValidationError.cs" />
-    <Compile Include="ValidationGroups.cs" />
-    <Compile Include="ValidationScriptManager.cs" />
-    <Compile Include="ValidationSummaryOptions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ClientSidePlugins\xVal.jquery.validate.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ClientSidePlugins\xVal.WebForms.jquery.validate.js" />
+    <Compile Include="ValidationResultExtensions.cs" />
+    <Compile Include="ValidationRunnerExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

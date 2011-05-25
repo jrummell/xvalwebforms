@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using xVal.ServerSide;
 
 namespace xVal.WebForms.Tests
 {
@@ -9,13 +8,12 @@ namespace xVal.WebForms.Tests
     {
         public static void PlaceBooking(Booking booking)
         {
-            IEnumerable<ErrorInfo> errors = DataAnnotationsValidationRunner.GetErrors(booking);
+            DataAnnotationsValidationRunner validationRunner = new DataAnnotationsValidationRunner();
+            IEnumerable<ValidationResult> errors = validationRunner.Validate(booking);
             if (errors.Any())
-                throw new RulesException(errors);
-
-            // Business rule: Can't place bookings on Sundays
-            if (booking.ArrivalDate.DayOfWeek == DayOfWeek.Sunday)
-                throw new RulesException("ArrivalDate", "Bookings are not permitted on Sundays", booking);
+            {
+                throw new ValidationException(errors.GetErrorMessage());
+            }
         }
     }
 }

@@ -20,6 +20,8 @@
         <fieldset class="booking">
             <legend>Booking</legend>
             <asp:ValidationSummary ID="valSummary" runat="server" CssClass="validation-summary" />
+            <val:ModelValidator ID="valBooking" runat="server" CssClass="validator" Display="Dynamic"
+                ModelType="xVal.WebForms.Demo.Booking" />
             <label for="txtClientName">
                 Your name:</label>
             <asp:TextBox ID="txtClientName" runat="server" />
