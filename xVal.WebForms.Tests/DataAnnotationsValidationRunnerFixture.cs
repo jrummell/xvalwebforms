@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NUnit.Framework;
-using xVal.ServerSide;
 
 namespace xVal.WebForms.Tests
 {
     [TestFixture]
     public class DataAnnotationsValidationRunnerFixture
     {
+        private IValidationRunner _validationRunner;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _validationRunner = new DataAnnotationsValidationRunner();
+        }
+
         [Test]
         public void Booking_GetErrors_ClientName_Null()
         {
@@ -18,13 +26,12 @@ namespace xVal.WebForms.Tests
                                        NumberOfGuests = 2
                                    };
 
-            IEnumerable<ErrorInfo> errors =
-                DataAnnotationsValidationRunner.GetErrors(instance);
+            IEnumerable<ValidationResult> errors = _validationRunner.Validate(instance);
 
             Assert.That(errors.Count(), Is.EqualTo(1));
 
-            ErrorInfo errorInfo = errors.First();
-            Assert.That(errorInfo.PropertyName, Is.EqualTo("ClientName"));
+            ValidationResult errorInfo = errors.First();
+            Assert.That(errorInfo.MemberNames.Contains("ClientName"));
             Assert.That(errorInfo.ErrorMessage, Is.EqualTo(Booking.ClientNameRequiredMessage));
         }
 
@@ -37,13 +44,12 @@ namespace xVal.WebForms.Tests
                 NumberOfGuests = 2
             };
 
-            IEnumerable<ErrorInfo> errors =
-                DataAnnotationsValidationRunner.GetErrors(instance);
+            IEnumerable<ValidationResult> errors = _validationRunner.Validate(instance);
 
             Assert.That(errors.Count(), Is.EqualTo(1));
 
-            ErrorInfo errorInfo = errors.First();
-            Assert.That(errorInfo.PropertyName, Is.EqualTo("ClientName"));
+            ValidationResult errorInfo = errors.First();
+            Assert.That(errorInfo.MemberNames.Contains("ClientName"));
             Assert.That(errorInfo.ErrorMessage, Is.EqualTo(Booking.ClientNameRequiredMessage));
         }
 
@@ -57,13 +63,12 @@ namespace xVal.WebForms.Tests
                                        NumberOfGuests = 0
                                    };
 
-            IEnumerable<ErrorInfo> errors =
-                DataAnnotationsValidationRunner.GetErrors(instance);
+            IEnumerable<ValidationResult> errors = _validationRunner.Validate(instance);
 
             Assert.That(errors.Count(), Is.EqualTo(1));
 
-            ErrorInfo errorInfo = errors.First();
-            Assert.That(errorInfo.PropertyName, Is.EqualTo("NumberOfGuests"));
+            ValidationResult errorInfo = errors.First();
+            Assert.That(errorInfo.MemberNames.Contains("NumberOfGuests"));
             Assert.That(errorInfo.ErrorMessage, Is.EqualTo(Booking.NumberOfGuestsRequiredMessage));
         }
 
@@ -77,8 +82,7 @@ namespace xVal.WebForms.Tests
                                        NumberOfGuests = 2
                                    };
 
-            IEnumerable<ErrorInfo> errors =
-                DataAnnotationsValidationRunner.GetErrors(instance);
+            IEnumerable<ValidationResult> errors = _validationRunner.Validate(instance);
 
             Assert.That(errors, Is.Empty);
         }
@@ -95,16 +99,16 @@ namespace xVal.WebForms.Tests
 
             try
             {
-                // should not throw a RulesException
+                // should not throw a ValidationException
                 BookingManager.PlaceBooking(instance);
             }
-            catch (RulesException)
+            catch (ValidationException)
             {
                 Assert.Fail();
             }
         }
 
-        [Test, ExpectedException(typeof(RulesException))]
+        [Test, ExpectedException(typeof(ValidationException))]
         public void BookingManager_PlaceBooking_ArrivalDateSunday()
         {
             Booking instance = new Booking
@@ -114,7 +118,7 @@ namespace xVal.WebForms.Tests
                 NumberOfGuests = 2
             };
 
-            // will throw RulesException
+            // will throw ValidationException
             BookingManager.PlaceBooking(instance);
         }
     }

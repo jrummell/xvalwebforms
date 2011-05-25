@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
-using System.Web.Compilation;
 using System.Web.Script.Serialization;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace xVal.WebForms
 {
-    public class ModelPropertyValidator : BaseValidator
+    public class ModelPropertyValidator : ModelValidatorBase
     {
-        private Type _modelType;
+        private IEnumerable<ValidationAttribute> _validationAttributes;
 
-        /// <summary>
-        /// Gets or sets the type of the model.
-        /// </summary>
-        /// <value>
-        /// The type of the model.
-        /// </value>
-        public string ModelType { get; set; }
+        public ModelPropertyValidator()
+        {
+        }
+
+        public ModelPropertyValidator(IValidationRunner validationRunner) 
+            : base(validationRunner)
+        {
+        }
 
         /// <summary>
         /// Gets or sets the name of the property.
@@ -37,16 +37,22 @@ namespace xVal.WebForms
         /// </returns>
         protected override bool EvaluateIsValid()
         {
-            EnsureChildControls();
-
-            foreach (BaseValidator validator in Controls)
+            IEnumerable<ValidationAttribute> attributes = GetValidationAttributes();
+            if (!attributes.Any())
             {
-                validator.Validate();
+                return true;
+            }
 
-                if (!validator.IsValid)
-                {
-                    return false;
-                }
+            Type modelType = GetModelType();
+            object value = GetModelPropertyValue(PropertyName, ControlToValidate);
+
+            IEnumerable<ValidationResult> errors =
+                ValidationRunner.Validate(modelType, value, PropertyName);
+
+            if (errors.Any())
+            {
+                ErrorMessage = errors.GetErrorMessage();
+                return false;
             }
 
             return true;
@@ -62,32 +68,29 @@ namespace xVal.WebForms
         {
             base.OnPreRender(e);
 
-            _modelType = GetModelType();
-
             if (String.IsNullOrEmpty(PropertyName))
             {
                 throw new InvalidOperationException("PropertyName must be set.");
             }
 
-            IEnumerable<ValidationAttribute> attributes = DataAnnotationsValidationRunner.GetValidators(_modelType,
-                                                                                                        PropertyName);
+            // build rules dictionary
+            IEnumerable<ValidationAttribute> attributes = GetValidationAttributes();
+
             IDictionary<string, object> rules = new Dictionary<string, object>();
             foreach (ValidationAttribute attribute in attributes)
             {
-                WebControl controlToValidate = Parent.FindControl(ControlToValidate) as WebControl;
-                if (controlToValidate != null)
+                IDictionary<string, object> attributeRules = GetValidationRules(attribute);
+                foreach (KeyValuePair<string, object> rule in attributeRules)
                 {
-                    IDictionary<string, object> attributeRules = GetValidationRules(attribute);
-                    foreach (KeyValuePair<string, object> rule in attributeRules)
-                    {
-                        rules.Add(rule.Key, rule.Value);
-                    }
+                    rules.Add(rule.Key, rule.Value);
                 }
             }
 
             if (rules.Count > 0)
             {
-                string validateInitScript = String.Format("$('#{0}').validate();{1}", Page.Form.ClientID, Environment.NewLine);
+                // register validation scripts
+                string validateInitScript = String.Format("$('#{0}').validate();{1}", Page.Form.ClientID,
+                                                          Environment.NewLine);
                 Page.ClientScript.RegisterStartupScript(GetType(), "Validate", validateInitScript, true);
 
                 StringBuilder validationOptionsScript = new StringBuilder();
@@ -100,7 +103,18 @@ namespace xVal.WebForms
             }
         }
 
-        private IDictionary<string, object> GetValidationRules(ValidationAttribute attribute)
+        private IEnumerable<ValidationAttribute> GetValidationAttributes()
+        {
+            if (_validationAttributes == null)
+            {
+                _validationAttributes =
+                    ValidationRunner.GetValidators(GetModelType(), PropertyName);
+            }
+
+            return _validationAttributes;
+        }
+
+        private static IDictionary<string, object> GetValidationRules(ValidationAttribute attribute)
         {
             IDictionary<string, object> rules = new Dictionary<string, object>();
 
@@ -112,6 +126,11 @@ namespace xVal.WebForms
             {
                 RangeAttribute rangeAttribute = (RangeAttribute) attribute;
                 rules.Add("range", new[] {rangeAttribute.Minimum, rangeAttribute.Maximum});
+            }
+            else if (attribute is StringLengthAttribute)
+            {
+                StringLengthAttribute stringLengthAttribute = (StringLengthAttribute)attribute;
+                rules.Add("rangelength", new[] { stringLengthAttribute.MinimumLength, stringLengthAttribute.MaximumLength });
             }
             else if (attribute is DataTypeAttribute)
             {
@@ -154,36 +173,6 @@ namespace xVal.WebForms
             }
 
             return rules;
-        }
-
-        /// <summary>
-        /// Gets the type of the model.
-        /// </summary>
-        /// <returns></returns>
-        private Type GetModelType()
-        {
-            if (_modelType == null)
-            {
-                if (String.IsNullOrEmpty(ModelType))
-                {
-                    throw new InvalidOperationException("ModelType must be set.");
-                }
-
-                _modelType = Type.GetType(ModelType);
-
-                if (_modelType == null)
-                {
-                    // App_Code Types are created with System.Web.Compilation.BuildManager
-                    _modelType = BuildManager.GetType(ModelType, false);
-                }
-
-                if (_modelType == null)
-                {
-                    throw new InvalidOperationException("Could not get a Type from " + ModelType);
-                }
-            }
-
-            return _modelType;
         }
     }
 }
