@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Web.Script.Serialization;
 using System.Web.UI;
 
 namespace xVal.WebForms
@@ -16,7 +14,7 @@ namespace xVal.WebForms
         {
         }
 
-        public ModelPropertyValidator(IValidationRunner validationRunner) 
+        public ModelPropertyValidator(IValidationRunner validationRunner)
             : base(validationRunner)
         {
         }
@@ -74,32 +72,15 @@ namespace xVal.WebForms
             }
 
             // build rules dictionary
-            IEnumerable<ValidationAttribute> attributes = GetValidationAttributes();
-
-            IDictionary<string, object> rules = new Dictionary<string, object>();
-            foreach (ValidationAttribute attribute in attributes)
-            {
-                IDictionary<string, object> attributeRules = GetValidationRules(attribute);
-                foreach (KeyValuePair<string, object> rule in attributeRules)
-                {
-                    rules.Add(rule.Key, rule.Value);
-                }
-            }
+            ValidationRuleProvider ruleProvider = new ValidationRuleProvider();
+            IDictionary<string, object> rules = ruleProvider.GetValidationRules(GetValidationAttributes());
 
             if (rules.Count > 0)
             {
                 // register validation scripts
-                string validateInitScript = String.Format("$('#{0}').validate();{1}", Page.Form.ClientID,
-                                                          Environment.NewLine);
-                Page.ClientScript.RegisterStartupScript(GetType(), "Validate", validateInitScript, true);
-
-                StringBuilder validationOptionsScript = new StringBuilder();
-                validationOptionsScript.AppendFormat("$('#{0}').rules('add', ", GetControlRenderID(ControlToValidate));
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                serializer.Serialize(rules, validationOptionsScript);
-                validationOptionsScript.AppendLine(");");
-
-                Page.ClientScript.RegisterStartupScript(GetType(), ClientID, validationOptionsScript.ToString(), true);
+                ValidationScriptManager scriptManager =
+                    new ValidationScriptManager(Page.ClientScript, ClientID, GetControlRenderID(ControlToValidate));
+                scriptManager.RegisterValidationScripts(rules);
             }
         }
 
@@ -114,65 +95,6 @@ namespace xVal.WebForms
             return _validationAttributes;
         }
 
-        private static IDictionary<string, object> GetValidationRules(ValidationAttribute attribute)
-        {
-            IDictionary<string, object> rules = new Dictionary<string, object>();
-
-            if (attribute is RequiredAttribute)
-            {
-                rules.Add("required", true);
-            }
-            else if (attribute is RangeAttribute)
-            {
-                RangeAttribute rangeAttribute = (RangeAttribute) attribute;
-                rules.Add("range", new[] {rangeAttribute.Minimum, rangeAttribute.Maximum});
-            }
-            else if (attribute is StringLengthAttribute)
-            {
-                StringLengthAttribute stringLengthAttribute = (StringLengthAttribute)attribute;
-                rules.Add("rangelength", new[] { stringLengthAttribute.MinimumLength, stringLengthAttribute.MaximumLength });
-            }
-            else if (attribute is DataTypeAttribute)
-            {
-                DataTypeAttribute dataTypeAttribute = (DataTypeAttribute) attribute;
-                switch (dataTypeAttribute.DataType)
-                {
-                    case DataType.Custom:
-                        break;
-                    case DataType.DateTime:
-                        break;
-                    case DataType.Date:
-                        rules.Add("date", true);
-                        break;
-                    case DataType.Time:
-                        break;
-                    case DataType.Duration:
-                        break;
-                    case DataType.PhoneNumber:
-                        rules.Add("phoneUS", true);
-                        break;
-                    case DataType.Currency:
-                        break;
-                    case DataType.Text:
-                        break;
-                    case DataType.Html:
-                        break;
-                    case DataType.MultilineText:
-                        break;
-                    case DataType.EmailAddress:
-                        rules.Add("email", true);
-                        break;
-                    case DataType.Password:
-                        break;
-                    case DataType.Url:
-                        rules.Add("url", true);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            return rules;
-        }
+        
     }
 }

@@ -65,7 +65,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValidationError.cs" />
     <Compile Include="ValidationResultExtensions.cs" />
+    <Compile Include="ValidationRuleProvider.cs" />
     <Compile Include="ValidationRunnerExtensions.cs" />
+    <Compile Include="ValidationScriptManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
