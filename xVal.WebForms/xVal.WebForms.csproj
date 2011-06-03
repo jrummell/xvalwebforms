@@ -36,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -43,6 +44,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -58,11 +60,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataAnnotationsValidationRunner.cs" />
+    <Compile Include="IValidationRuleProvider.cs" />
     <Compile Include="IValidationRunner.cs" />
+    <Compile Include="IValidationScriptManager.cs" />
     <Compile Include="ModelPropertyValidator.cs" />
     <Compile Include="ModelValidator.cs" />
     <Compile Include="ModelValidatorBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rule.cs" />
+    <Compile Include="RuleCollection.cs" />
+    <Compile Include="RulesJavaScriptConverter.cs" />
     <Compile Include="ValidationError.cs" />
     <Compile Include="ValidationResultExtensions.cs" />
     <Compile Include="ValidationRuleProvider.cs" />

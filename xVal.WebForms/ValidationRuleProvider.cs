@@ -1,85 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace xVal.WebForms
 {
-    public class ValidationRuleProvider
+    public class ValidationRuleProvider : IValidationRuleProvider
     {
-        public IDictionary<string, object> GetValidationRules(IEnumerable<ValidationAttribute> attributes)
+        /// <summary>
+        /// Gets the rules.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        /// <returns></returns>
+        public RuleCollection GetRules(IEnumerable<ValidationAttribute> attributes)
         {
-            IDictionary<string, object> rules = new Dictionary<string, object>();
-            foreach (ValidationAttribute attribute in attributes)
+            if (attributes == null)
             {
-                IDictionary<string, object> attributeRules = GetValidationRules(attribute);
-                foreach (KeyValuePair<string, object> rule in attributeRules)
-                {
-                    rules.Add(rule.Key, rule.Value);
-                }
+                throw new ArgumentNullException("attributes");
             }
-            return rules;
+
+            List<Rule> rules = attributes.Select(attribute => GetRule(attribute)).ToList();
+            return new RuleCollection(rules);
         }
 
-        private static IDictionary<string, object> GetValidationRules(ValidationAttribute attribute)
+        private static Rule GetRule(ValidationAttribute attribute)
         {
-            IDictionary<string, object> rules = new Dictionary<string, object>();
+            Rule rule = null;
 
             if (attribute is RequiredAttribute)
             {
-                rules.Add("required", true);
+                rule = new Rule {Name = "required", Options = true};
             }
             else if (attribute is RangeAttribute)
             {
                 RangeAttribute rangeAttribute = (RangeAttribute) attribute;
-                rules.Add("range", new[] {rangeAttribute.Minimum, rangeAttribute.Maximum});
+                rule = new Rule {Name = "range", Options = new[] {rangeAttribute.Minimum, rangeAttribute.Maximum}};
             }
             else if (attribute is StringLengthAttribute)
             {
                 StringLengthAttribute stringLengthAttribute = (StringLengthAttribute) attribute;
-                rules.Add("rangelength",
-                          new[] {stringLengthAttribute.MinimumLength, stringLengthAttribute.MaximumLength});
+                rule = new Rule
+                           {
+                               Name = "rangelength",
+                               Options =
+                                   new[] { stringLengthAttribute.MinimumLength, stringLengthAttribute.MaximumLength }
+                           };
             }
             else if (attribute is DataTypeAttribute)
             {
                 DataTypeAttribute dataTypeAttribute = (DataTypeAttribute) attribute;
                 switch (dataTypeAttribute.DataType)
                 {
-                    case DataType.Custom:
-                        break;
-                    case DataType.DateTime:
-                        break;
                     case DataType.Date:
-                        rules.Add("date", true);
+                    case DataType.DateTime:
+                        rule = new Rule {Name = "date", Options = true};
                         break;
                     case DataType.Time:
-                        break;
-                    case DataType.Duration:
+                        rule = new Rule {Name = "time", Options = true};
                         break;
                     case DataType.PhoneNumber:
-                        rules.Add("phoneUS", true);
-                        break;
-                    case DataType.Currency:
-                        break;
-                    case DataType.Text:
-                        break;
-                    case DataType.Html:
-                        break;
-                    case DataType.MultilineText:
+                        rule = new Rule {Name = "phoneUS", Options = true};
                         break;
                     case DataType.EmailAddress:
-                        rules.Add("email", true);
-                        break;
-                    case DataType.Password:
+                        rule = new Rule {Name = "email", Options = true};
                         break;
                     case DataType.Url:
-                        rules.Add("url", true);
+                        rule = new Rule {Name = "url", Options = true};
                         break;
+                    case DataType.Currency:
+                    case DataType.Text:
+                    case DataType.Html:
+                    case DataType.MultilineText:
+                    case DataType.Password:
+                    case DataType.Duration:
+                    case DataType.Custom:
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            return rules;
+            if (rule != null)
+            {
+                rule.Message = attribute.FormatErrorMessage(String.Empty);
+            }
+
+            return rule;
         }
     }
 }

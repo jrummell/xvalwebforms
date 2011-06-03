@@ -1,21 +1,9 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BookingDemo.aspx.cs" Inherits="BookingDemo" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="BookingDemo.aspx.cs" Inherits="BookingDemo"
+    MasterPageFile="~/Site.master" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>xVal.WebForms Demo</title>
-    <script src="http://ajax.microsoft.com/ajax/jQuery/jquery-1.5.min.js" type="text/javascript"></script>
-    <script src="http://ajax.microsoft.com/ajax/jquery.validate/1.8/jquery.validate.min.js"
-        type="text/javascript"></script>
-    <style type="text/css">
-        label.error
-        {
-            color: Red;
-        }
-    </style>
-</head>
-<body>
-    <form id="form1" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ContentPlaceHolderID="main" runat="server">
     <div id="divForm" runat="server">
         <fieldset class="booking">
             <legend>Booking</legend>
@@ -52,6 +40,4 @@
     </div>
     <div id="divSuccess" runat="server" class="success" visible="false">
         Your trip has been booked!</div>
-    </form>
-</body>
-</html>
+</asp:Content>
