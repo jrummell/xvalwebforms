@@ -8,12 +8,18 @@ namespace xVal.WebForms
     {
         private Type _modelType;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModelValidatorBase"/> class.
+        /// </summary>
         protected ModelValidatorBase()
             : this(null)
         {
-            
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModelValidatorBase"/> class.
+        /// </summary>
+        /// <param name="validationRunner">The validation runner.</param>
         protected ModelValidatorBase(IValidationRunner validationRunner)
         {
             ValidationRunner = validationRunner ?? new DataAnnotationsValidationRunner();
@@ -33,6 +39,18 @@ namespace xVal.WebForms
         public string ModelType { get; set; }
 
         /// <summary>
+        /// Determines whether the control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is a valid control.
+        /// </summary>
+        /// <returns>
+        /// true if the control specified by <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> is a valid control; otherwise, false.
+        /// </returns>
+        /// <exception cref="T:System.Web.HttpException">No value is specified for the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property.- or -The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is not found on the page.- or -The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property does not have a <see cref="T:System.Web.UI.ValidationPropertyAttribute"/> attribute associated with it; therefore, it cannot be validated with a validation control.</exception>
+        protected override bool ControlPropertiesValid()
+        {
+            return base.ControlPropertiesValid() && !String.IsNullOrEmpty(ModelType);
+        }
+
+        /// <summary>
         /// Gets the type of the model.
         /// </summary>
         /// <returns></returns>
@@ -40,11 +58,6 @@ namespace xVal.WebForms
         {
             if (_modelType == null)
             {
-                if (String.IsNullOrEmpty(ModelType))
-                {
-                    throw new InvalidOperationException("ModelType must be set.");
-                }
-
                 _modelType = Type.GetType(ModelType);
 
                 if (_modelType == null)
@@ -72,7 +85,14 @@ namespace xVal.WebForms
         {
             string stringValue = GetControlValidationValue(valueControlId);
             Type propertyType = GetModelType().GetProperty(propertyName).PropertyType;
-            return Convert.ChangeType(stringValue, propertyType);
+            try
+            {
+                return Convert.ChangeType(stringValue, propertyType);
+            }
+            catch (FormatException)
+            {
+                return null;
+            }
         }
     }
 }
