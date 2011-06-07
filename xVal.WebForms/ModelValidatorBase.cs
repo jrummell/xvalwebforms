@@ -1,11 +1,22 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Web.Compilation;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace xVal.WebForms
 {
-    public abstract class ModelValidatorBase : BaseValidator
+    /// <summary>
+    /// Base model validator.
+    /// </summary>
+    /// <remarks>
+    /// We're implementing <see cref="IValidator"/> instead of <see cref="BaseValidator"/> since 
+    /// we don't need (or want) standard ASP.NET web form validation scripts injected into the page.
+    /// </remarks>
+    public abstract class ModelValidatorBase : WebControl, IValidator
     {
+        //TODO: persist properties with ViewState
+    
         private Type _modelType;
 
         /// <summary>
@@ -23,6 +34,8 @@ namespace xVal.WebForms
         protected ModelValidatorBase(IValidationRunner validationRunner)
         {
             ValidationRunner = validationRunner ?? new DataAnnotationsValidationRunner();
+            
+            EnableClientScript = true;
         }
 
         /// <summary>
@@ -39,15 +52,92 @@ namespace xVal.WebForms
         public string ModelType { get; set; }
 
         /// <summary>
-        /// Determines whether the control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is a valid control.
+        /// Gets or sets the control to validate.
         /// </summary>
-        /// <returns>
-        /// true if the control specified by <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> is a valid control; otherwise, false.
-        /// </returns>
-        /// <exception cref="T:System.Web.HttpException">No value is specified for the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property.- or -The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is not found on the page.- or -The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property does not have a <see cref="T:System.Web.UI.ValidationPropertyAttribute"/> attribute associated with it; therefore, it cannot be validated with a validation control.</exception>
-        protected override bool ControlPropertiesValid()
+        /// <value>
+        /// The control to validate.
+        /// </value>
+        public string ControlToValidate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the validation group.
+        /// </summary>
+        /// <value>
+        /// The validation group.
+        /// </value>
+        public string ValidationGroup { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to client script is enabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if client script is enabled; otherwise, <c>false</c>.
+        /// </value>
+        public bool EnableClientScript { get; set; }
+
+        #region IValidator Members
+
+        /// <summary>
+        /// Evaluates the condition it checks and updates the <see cref="P:System.Web.UI.IValidator.IsValid"/> property.
+        /// </summary>
+        public void Validate()
         {
-            return base.ControlPropertiesValid() && !String.IsNullOrEmpty(ModelType);
+            IsValid = EvaluateIsValid();
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the user-entered content in the specified control passes validation.
+        /// </summary>
+        /// <returns>true if the content is valid; otherwise, false.</returns>
+        public bool IsValid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the error message text generated when the condition being validated fails.
+        /// </summary>
+        /// <returns>The error message to generate.</returns>
+        public string ErrorMessage { get; set; }
+
+        #endregion
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Web.UI.Control.Init"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs"/> object that contains the event data.</param>
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            if (ErrorMessage == null)
+            {
+                ErrorMessage = String.Empty;
+            }
+
+            Page.Validators.Add(this);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Web.UI.Control.Unload"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs"/> object that contains event data.</param>
+        protected override void OnUnload(EventArgs e)
+        {
+            if (Page != null)
+            {
+                Page.Validators.Remove(this);
+            }
+            base.OnUnload(e);
+        }
+
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Web.UI.Control.PreRender"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs"/> object that contains the event data.</param>
+        protected override void OnPreRender(EventArgs e)
+        {
+            base.OnPreRender(e);
+
+            ControlPropertiesValid();
         }
 
         /// <summary>
@@ -93,6 +183,68 @@ namespace xVal.WebForms
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Gets the control validation value.
+        /// </summary>
+        /// <remarks>
+        /// Based on the reflected source of <see cref="BaseValidator.GetControlValidationValue"/>.
+        /// </remarks>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
+        private string GetControlValidationValue(string name)
+        {
+            Control valueControl = NamingContainer.FindControl(name);
+            if (valueControl == null)
+            {
+                return null;
+            }
+            PropertyDescriptor validationProperty = BaseValidator.GetValidationProperty(valueControl);
+            if (validationProperty == null)
+            {
+                return null;
+            }
+
+            object value = validationProperty.GetValue(valueControl);
+            if (value is ListItem)
+            {
+                return ((ListItem) value).Value;
+            }
+
+            if (value != null)
+            {
+                return value.ToString();
+            }
+
+            return String.Empty;
+        }
+
+        protected abstract bool EvaluateIsValid();
+
+        protected virtual bool ControlPropertiesValid()
+        {
+            if (String.IsNullOrEmpty(ControlToValidate))
+            {
+                throw new InvalidOperationException("ControlToValidate is required.");
+            }
+
+            if (String.IsNullOrEmpty(ModelType))
+            {
+                throw new InvalidOperationException("ModelType is required.");
+            }
+
+            return true;
+        }
+
+        protected string GetControlRenderID(string name)
+        {
+            Control control = FindControl(name);
+            if (control == null)
+            {
+                return string.Empty;
+            }
+            return control.ClientID;
         }
     }
 }

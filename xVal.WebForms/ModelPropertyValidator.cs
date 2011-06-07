@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.UI;
+using xVal.WebForms;
+
+[assembly: WebResource(ModelPropertyValidator.WebformValidateResourceName, "text/javascript")]
 
 namespace xVal.WebForms
 {
     public class ModelPropertyValidator : ModelValidatorBase
     {
+        internal const string WebformValidateResourceName = "xVal.WebForms.webformValidate.js";
+
         private IValidationRuleProvider _ruleProvider;
         private IValidationScriptManager _scriptManager;
         private IEnumerable<ValidationAttribute> _validationAttributes;
@@ -92,7 +97,10 @@ namespace xVal.WebForms
         {
             base.OnPreRender(e);
 
-            RegisterScripts();
+            if (EnableClientScript)
+            {
+                RegisterScripts();
+            }
         }
 
         public void RegisterScripts()
@@ -119,7 +127,7 @@ namespace xVal.WebForms
             // register validation scripts
             if (_scriptManager == null)
             {
-                _scriptManager = new ValidationScriptManager(Page.ClientScript, GetControlRenderID(ControlToValidate));
+                _scriptManager = new ValidationScriptManager(Page, GetControlRenderID(ControlToValidate));
             }
 
             _scriptManager.RegisterScripts(rules);
