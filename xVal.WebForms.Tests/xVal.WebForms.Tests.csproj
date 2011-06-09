@@ -75,6 +75,7 @@
     <Compile Include="BookingWithInternalConstructor.cs" />
     <Compile Include="BookingManager.cs" />
     <Compile Include="DataAnnotationsValidationRunnerFixture.cs" />
+    <Compile Include="FakeValidatorCollection.cs" />
     <Compile Include="ModelPropertyValidatorFixture.cs" />
     <Compile Include="ModelValidatorFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

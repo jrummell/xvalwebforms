@@ -17,26 +17,41 @@ namespace xVal.WebForms.Tests
             _mockValidationRunner = new Mock<IValidationRunner>();
             _mockRuleProvider = new Mock<IValidationRuleProvider>();
             _mockScriptManager = new Mock<IValidationScriptManager>();
-            _modelPropertyValidator =
+            _validator =
                 new ModelPropertyValidator(
                     _mockValidationRunner.Object, _mockRuleProvider.Object, _mockScriptManager.Object);
         }
 
         #endregion
 
-        private ModelPropertyValidator _modelPropertyValidator;
+        private ModelPropertyValidator _validator;
         private Mock<IValidationScriptManager> _mockScriptManager;
         private Mock<IValidationRuleProvider> _mockRuleProvider;
         private Mock<IValidationRunner> _mockValidationRunner;
 
         [Test]
+        public void ControlPropertiesValid()
+        {
+            Assert.That(() => _validator.ControlPropertiesValid(), Throws.InvalidOperationException);
+
+            _validator.ControlToValidate = "txtClientName";
+            _validator.ModelType = typeof (Booking).AssemblyQualifiedName;
+
+            Assert.That(() => _validator.ControlPropertiesValid(), Throws.InvalidOperationException);
+
+            _validator.PropertyName = "ClientName";
+
+            Assert.That(_validator.ControlPropertiesValid(), Is.True);
+        }
+
+        [Test]
         public void RegisterScripts()
         {
-            _modelPropertyValidator.ControlToValidate = "txtClientName";
+            _validator.ControlToValidate = "txtClientName";
             const string propertyName = "ClientName";
-            _modelPropertyValidator.PropertyName = propertyName;
+            _validator.PropertyName = propertyName;
             Type bookingType = typeof (Booking);
-            _modelPropertyValidator.ModelType = bookingType.AssemblyQualifiedName;
+            _validator.ModelType = bookingType.AssemblyQualifiedName;
 
             ValidationAttribute[] attributes = new ValidationAttribute[] {new RequiredAttribute()};
             _mockValidationRunner.Setup(
@@ -49,7 +64,7 @@ namespace xVal.WebForms.Tests
 
             _mockScriptManager.Setup(manager => manager.RegisterScripts(rules)).Verifiable();
 
-            _modelPropertyValidator.RegisterScripts();
+            _validator.RegisterScripts();
 
             _mockRuleProvider.Verify();
             _mockValidationRunner.Verify();
@@ -59,22 +74,28 @@ namespace xVal.WebForms.Tests
         [Test]
         public void RegisterScriptsNoAttributes()
         {
-            _modelPropertyValidator.ControlToValidate = "txtClientName";
+            _validator.ControlToValidate = "txtClientName";
             const string propertyName = "ClientName";
-            _modelPropertyValidator.PropertyName = propertyName;
+            _validator.PropertyName = propertyName;
             Type bookingType = typeof (Booking);
-            _modelPropertyValidator.ModelType = bookingType.AssemblyQualifiedName;
+            _validator.ModelType = bookingType.AssemblyQualifiedName;
 
             ValidationAttribute[] attributes = new ValidationAttribute[0];
             _mockValidationRunner.Setup(
                 runner => runner.GetValidators(bookingType, propertyName)).Returns(
                     attributes).Verifiable();
 
-            _modelPropertyValidator.RegisterScripts();
+            _validator.RegisterScripts();
 
             _mockRuleProvider.Verify(provider => provider.GetRules(attributes), Times.Never());
             _mockValidationRunner.Verify();
             _mockScriptManager.Verify(manager => manager.RegisterScripts(null), Times.Never());
+        }
+
+        [Test]
+        public void Validate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -15,33 +15,15 @@ namespace xVal.WebForms
     /// </remarks>
     public abstract class ModelValidatorBase : WebControl, IValidator
     {
-        //TODO: persist properties with ViewState
-    
         private Type _modelType;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModelValidatorBase"/> class.
         /// </summary>
         protected ModelValidatorBase()
-            : this(null)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ModelValidatorBase"/> class.
-        /// </summary>
-        /// <param name="validationRunner">The validation runner.</param>
-        protected ModelValidatorBase(IValidationRunner validationRunner)
-        {
-            ValidationRunner = validationRunner ?? new DataAnnotationsValidationRunner();
-            
             EnableClientScript = true;
         }
-
-        /// <summary>
-        /// Gets the validation runner.
-        /// </summary>
-        protected IValidationRunner ValidationRunner { get; private set; }
 
         /// <summary>
         /// Gets or sets the type of the model.
@@ -49,7 +31,11 @@ namespace xVal.WebForms
         /// <value>
         /// The type of the model.
         /// </value>
-        public string ModelType { get; set; }
+        public string ModelType
+        {
+            get { return (string) (ViewState["ModelType"] ?? String.Empty); }
+            set { ViewState["ModelType"] = value; }
+        }
 
         /// <summary>
         /// Gets or sets the control to validate.
@@ -57,15 +43,11 @@ namespace xVal.WebForms
         /// <value>
         /// The control to validate.
         /// </value>
-        public string ControlToValidate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the validation group.
-        /// </summary>
-        /// <value>
-        /// The validation group.
-        /// </value>
-        public string ValidationGroup { get; set; }
+        public string ControlToValidate
+        {
+            get { return (string) (ViewState["ControlToValidate"] ?? String.Empty); }
+            set { ViewState["ControlToValidate"] = value; }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether to client script is enabled.
@@ -73,7 +55,11 @@ namespace xVal.WebForms
         /// <value>
         ///   <c>true</c> if client script is enabled; otherwise, <c>false</c>.
         /// </value>
-        public bool EnableClientScript { get; set; }
+        public bool EnableClientScript
+        {
+            get { return (bool) (ViewState["EnableClientScript"] ?? true); }
+            set { ViewState["EnableClientScript"] = value; }
+        }
 
         #region IValidator Members
 
@@ -89,13 +75,21 @@ namespace xVal.WebForms
         /// Gets or sets a value indicating whether the user-entered content in the specified control passes validation.
         /// </summary>
         /// <returns>true if the content is valid; otherwise, false.</returns>
-        public bool IsValid { get; set; }
+        public bool IsValid
+        {
+            get { return (bool) (ViewState["IsValid"] ?? true); }
+            set { ViewState["IsValid"] = value; }
+        }
 
         /// <summary>
         /// Gets or sets the error message text generated when the condition being validated fails.
         /// </summary>
         /// <returns>The error message to generate.</returns>
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage
+        {
+            get { return (string) (ViewState["ErrorMessage"] ?? true); }
+            set { ViewState["ErrorMessage"] = value; }
+        }
 
         #endregion
 
@@ -125,6 +119,7 @@ namespace xVal.WebForms
             {
                 Page.Validators.Remove(this);
             }
+
             base.OnUnload(e);
         }
 
@@ -137,7 +132,10 @@ namespace xVal.WebForms
         {
             base.OnPreRender(e);
 
-            ControlPropertiesValid();
+            if (!ControlPropertiesValid())
+            {
+                throw new InvalidOperationException("Control properties are invalid.");
+            }
         }
 
         /// <summary>
@@ -183,6 +181,10 @@ namespace xVal.WebForms
             {
                 return null;
             }
+            catch (InvalidCastException)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -220,9 +222,17 @@ namespace xVal.WebForms
             return String.Empty;
         }
 
+        /// <summary>
+        /// Evaluates the condition.
+        /// </summary>
+        /// <returns></returns>
         protected abstract bool EvaluateIsValid();
 
-        protected virtual bool ControlPropertiesValid()
+        /// <summary>
+        /// Returns true if the properties are valid.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool ControlPropertiesValid()
         {
             if (String.IsNullOrEmpty(ControlToValidate))
             {
@@ -234,15 +244,26 @@ namespace xVal.WebForms
                 throw new InvalidOperationException("ModelType is required.");
             }
 
+            Type modelType = GetModelType();
+            if (modelType == null)
+            {
+                throw new InvalidOperationException("Could not create Type from ModelType: " + ModelType);
+            }
+
             return true;
         }
 
-        protected string GetControlRenderID(string name)
+        /// <summary>
+        /// Gets the control render ID.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns></returns>
+        protected string GetControlRenderId(string name)
         {
             Control control = FindControl(name);
             if (control == null)
             {
-                return string.Empty;
+                return String.Empty;
             }
             return control.ClientID;
         }
