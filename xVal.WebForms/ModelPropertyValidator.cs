@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Web.UI;
 using xVal.WebForms;
 
@@ -12,6 +13,7 @@ namespace xVal.WebForms
     public class ModelPropertyValidator : ModelValidatorBase
     {
         internal const string WebformValidateResourceName = "xVal.WebForms.webformValidate.js";
+        private readonly IValidationRunner _validationRunner;
 
         private IValidationRuleProvider _ruleProvider;
         private IValidationScriptManager _scriptManager;
@@ -32,8 +34,8 @@ namespace xVal.WebForms
         /// <param name="scriptManager">The script manager.</param>
         public ModelPropertyValidator(IValidationRunner validationRunner, IValidationRuleProvider ruleProvider,
                                       IValidationScriptManager scriptManager)
-            : base(validationRunner)
         {
+            _validationRunner = validationRunner ?? new DataAnnotationsValidationRunner();
             _ruleProvider = ruleProvider;
             _scriptManager = scriptManager;
         }
@@ -44,6 +46,7 @@ namespace xVal.WebForms
         /// <value>
         /// The name of the property.
         /// </value>
+	//TODO: use ViewState
         public string PropertyName { get; set; }
 
         /// <summary>
@@ -53,9 +56,26 @@ namespace xVal.WebForms
         /// true if the control specified by <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> is a valid control; otherwise, false.
         /// </returns>
         /// <exception cref="T:System.Web.HttpException">No value is specified for the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property.- or -The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is not found on the page.- or -The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property does not have a <see cref="T:System.Web.UI.ValidationPropertyAttribute"/> attribute associated with it; therefore, it cannot be validated with a validation control.</exception>
-        protected override bool ControlPropertiesValid()
+        public override bool ControlPropertiesValid()
         {
-            return base.ControlPropertiesValid() && !String.IsNullOrEmpty(PropertyName);
+            base.ControlPropertiesValid();
+
+            if (String.IsNullOrEmpty(PropertyName))
+            {
+                throw new InvalidOperationException("PropertyName is required.");
+            }
+
+            Type modelType = GetModelType();
+            PropertyInfo property = modelType.GetProperty(PropertyName);
+
+            if (property == null)
+            {
+                string message =
+                    String.Format("Could not find PropertyName:{0} on ModelType: {1}", PropertyName, ModelType);
+                throw new InvalidOperationException(message);
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -76,7 +96,7 @@ namespace xVal.WebForms
             object value = GetModelPropertyValue(PropertyName, ControlToValidate);
 
             IEnumerable<ValidationResult> errors =
-                ValidationRunner.Validate(modelType, value, PropertyName);
+                _validationRunner.Validate(modelType, value, PropertyName);
 
             if (errors.Any())
             {
@@ -87,12 +107,20 @@ namespace xVal.WebForms
             return true;
         }
 
+        /// <summary>
+        /// Renders the control to the specified HTML writer.
+        /// </summary>
+        /// <param name="writer">The <see cref="T:System.Web.UI.HtmlTextWriter"/> object that receives the control content.</param>
         protected override void Render(HtmlTextWriter writer)
         {
             // only render the child validator controls
             RenderChildren(writer);
         }
 
+        /// <summary>
+        /// Raises the <see cref="E:System.Web.UI.Control.PreRender"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs"/> object that contains the event data.</param>
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -103,6 +131,9 @@ namespace xVal.WebForms
             }
         }
 
+        /// <summary>
+        /// Registers the scripts.
+        /// </summary>
         public void RegisterScripts()
         {
             // get the attriubtes
@@ -127,18 +158,22 @@ namespace xVal.WebForms
             // register validation scripts
             if (_scriptManager == null)
             {
-                _scriptManager = new ValidationScriptManager(Page, GetControlRenderID(ControlToValidate));
+                _scriptManager = new ValidationScriptManager(Page, GetControlRenderId(ControlToValidate));
             }
 
             _scriptManager.RegisterScripts(rules);
         }
 
+        /// <summary>
+        /// Gets the validation attributes.
+        /// </summary>
+        /// <returns></returns>
         private IEnumerable<ValidationAttribute> GetValidationAttributes()
         {
             if (_validationAttributes == null)
             {
                 _validationAttributes =
-                    ValidationRunner.GetValidators(GetModelType(), PropertyName);
+                    _validationRunner.GetValidators(GetModelType(), PropertyName);
             }
 
             return _validationAttributes;
