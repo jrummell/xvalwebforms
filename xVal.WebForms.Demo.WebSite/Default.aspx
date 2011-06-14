@@ -4,14 +4,10 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="main" runat="Server">
-    <h1>
-        xVal for WebForms Demo</h1>
     Demos:
     <ul>
         <li><a href="BookingDemo.aspx">Booking demo</a></li>
-        <li><a href="BookingValidationGroups.aspx">Booking demo with validation groups</a></li>
-        <li><a href="BookingValidationSummary.aspx">Booking demo with a validation summary in
-            the master page</a></li>
+        <li><a href="BookingDemoValidationGroup.aspx">Booking demo with validation groups</a></li>
         <li><a href="BookingDemoEnableClientScript.aspx">Booking demo with EnableClientScript
             set to false</a></li>
     </ul>

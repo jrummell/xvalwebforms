@@ -26,7 +26,6 @@ namespace xVal.WebForms.Tests
         {
             Assert.That(() => _validator.ControlPropertiesValid(), Throws.InvalidOperationException);
 
-            _validator.ControlToValidate = "txtClientName";
             _validator.ModelType = typeof (Booking).AssemblyQualifiedName;
 
             Assert.That(_validator.ControlPropertiesValid(), Is.True);
@@ -39,19 +38,22 @@ namespace xVal.WebForms.Tests
             _validator.ModelType = model.GetType().AssemblyQualifiedName;
 
             // we need a naming container
-            LoginView container = new LoginView();
-            container.Controls.Add(new ModelPropertyValidator
-                                       {
-                                           ModelType = _validator.ModelType,
-                                           PropertyName = "ArrivalDate",
-                                           ControlToValidate = "txtArrivalDate"
-                                       });
+            ContainerControl container = new ContainerControl();
+            ModelPropertyValidator propertyValidator =
+                new ModelPropertyValidator
+                    {
+                        ModelType = _validator.ModelType,
+                        PropertyName = "ArrivalDate",
+                        ControlToValidate = "txtArrivalDate"
+                    };
+            _validatorCollection.Add(propertyValidator);
+            container.Controls.Add(propertyValidator);
             container.Controls.Add(_validator);
 
             _validator.Validate();
 
             Assert.That(_validator.IsValid, Is.False);
-            Assert.That(_validatorCollection.Count, Is.EqualTo(1));
+            Assert.That(_validatorCollection.Count, Is.EqualTo(2));
         }
 
         [Test]

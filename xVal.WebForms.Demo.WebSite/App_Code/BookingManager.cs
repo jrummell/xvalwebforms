@@ -15,7 +15,7 @@ namespace xVal.WebForms.Demo
                 throw new ValidationException(errors.GetErrorMessage());
             }
 
-            // Todo: save to database or whatever
+            // place the booking
         }
     }
 }

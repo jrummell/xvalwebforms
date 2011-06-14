@@ -23,6 +23,7 @@ namespace xVal.WebForms
         /// Initializes a new instance of the <see cref="ModelPropertyValidator"/> class.
         /// </summary>
         public ModelPropertyValidator()
+            : this(null, null, null)
         {
         }
 
@@ -62,6 +63,11 @@ namespace xVal.WebForms
         public override bool ControlPropertiesValid()
         {
             base.ControlPropertiesValid();
+
+            if (String.IsNullOrEmpty(ControlToValidate))
+            {
+                throw new InvalidOperationException("ControlToValidate is required.");
+            }
 
             if (String.IsNullOrEmpty(PropertyName))
             {
