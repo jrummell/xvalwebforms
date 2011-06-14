@@ -18,3 +18,7 @@
     border: solid 1px Green;
     color: Green;
 }
+label.error
+{
+    color: Red;
+}

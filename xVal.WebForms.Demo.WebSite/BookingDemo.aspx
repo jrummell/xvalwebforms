@@ -7,7 +7,7 @@
     <div id="divForm" runat="server">
         <fieldset class="booking">
             <legend>Booking</legend>
-            <asp:ValidationSummary ID="valSummary" runat="server" CssClass="validation-summary" />
+            <asp:ValidationSummary ID="valSummary" runat="server" CssClass="ui-state-error" />
             <val:ModelValidator ID="valBooking" runat="server" CssClass="validator" Display="Dynamic"
                 ModelType="xVal.WebForms.Demo.Booking" />
             <label for="txtClientName">
@@ -24,7 +24,7 @@
                 ModelType="xVal.WebForms.Demo.Booking" />
             <label for="txtArrivalDate">
                 Arrival date:</label>
-            <asp:TextBox ID="txtArrivalDate" runat="server" />
+            <asp:TextBox ID="txtArrivalDate" runat="server" CssClass="date-picker" />
             <val:ModelPropertyValidator ID="valArrivalDate" runat="server" CssClass="validator"
                 ControlToValidate="txtArrivalDate" Display="Dynamic" PropertyName="ArrivalDate"
                 ModelType="xVal.WebForms.Demo.Booking" />
@@ -38,6 +38,6 @@
                 <asp:Button ID="btnSubmit" runat="server" Text="Submit" OnClick="btnSubmit_Click" /></div>
         </fieldset>
     </div>
-    <div id="divSuccess" runat="server" class="success" visible="false">
+    <div id="divSuccess" runat="server" class="ui-state-highlight" visible="false">
         Your trip has been booked!</div>
 </asp:Content>

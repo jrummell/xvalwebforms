@@ -13,7 +13,7 @@ namespace xVal.WebForms
     /// We're implementing <see cref="IValidator"/> instead of <see cref="BaseValidator"/> since 
     /// we don't need (or want) standard ASP.NET web form validation scripts injected into the page.
     /// </remarks>
-    public abstract class ModelValidatorBase : WebControl, IValidator
+    public abstract class ModelValidatorBase : WebControl, IModelValidator
     {
         private Type _modelType;
 
@@ -61,6 +61,18 @@ namespace xVal.WebForms
             set { ViewState["EnableClientScript"] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the validation group.
+        /// </summary>
+        /// <value>
+        /// The validation group.
+        /// </value>
+        public string ValidationGroup
+        {
+            get { return (string) (ViewState["ValidationGroup"] ?? String.Empty); }
+            set { ViewState["ValidationGroup"] = value; }
+        }
+
         #region IValidator Members
 
         /// <summary>
@@ -87,7 +99,7 @@ namespace xVal.WebForms
         /// <returns>The error message to generate.</returns>
         public string ErrorMessage
         {
-            get { return (string) (ViewState["ErrorMessage"] ?? true); }
+            get { return (string) (ViewState["ErrorMessage"] ?? String.Empty); }
             set { ViewState["ErrorMessage"] = value; }
         }
 
@@ -234,11 +246,6 @@ namespace xVal.WebForms
         /// <returns></returns>
         public virtual bool ControlPropertiesValid()
         {
-            if (String.IsNullOrEmpty(ControlToValidate))
-            {
-                throw new InvalidOperationException("ControlToValidate is required.");
-            }
-
             if (String.IsNullOrEmpty(ModelType))
             {
                 throw new InvalidOperationException("ModelType is required.");

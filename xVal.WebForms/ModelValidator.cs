@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.Web.UI;
 
 namespace xVal.WebForms
 {
@@ -58,10 +57,9 @@ namespace xVal.WebForms
                 _validatorCollection = new PageValidatorCollection(Page);
             }
 
-            List<ModelPropertyValidator> propertyValidators = new List<ModelPropertyValidator>();
-            BuildPropertyValidatorList(NamingContainer, propertyValidators);
+            ICollection<ModelPropertyValidator> validators = GetPropertyValidators();
 
-            if (propertyValidators.Count > 0)
+            if (validators.Count > 0)
             {
                 Type modelType = GetModelType();
                 IValidatableObject model = Activator.CreateInstance(modelType) as IValidatableObject;
@@ -69,7 +67,7 @@ namespace xVal.WebForms
                 if (model != null)
                 {
                     // set the model with the form values
-                    foreach (ModelPropertyValidator propertyValidator in propertyValidators)
+                    foreach (ModelPropertyValidator propertyValidator in validators)
                     {
                         PropertyInfo property = modelType.GetProperty(propertyValidator.PropertyName);
                         object propertyValue = GetModelPropertyValue(property.Name, propertyValidator.ControlToValidate);
@@ -79,7 +77,7 @@ namespace xVal.WebForms
                     IEnumerable<ValidationResult> results = model.Validate(new ValidationContext(model, null, null));
                     foreach (ValidationResult result in results)
                     {
-                        _validatorCollection.Add(new ValidationError(result.ErrorMessage));
+                        _validatorCollection.Add(new ValidationError(result.ErrorMessage, ValidationGroup));
                     }
 
                     return !results.Any();
@@ -89,26 +87,23 @@ namespace xVal.WebForms
             return true;
         }
 
-        /// <summary>
-        /// Builds the property validator list.
-        /// </summary>
-        /// <param name="control">The control.</param>
-        /// <param name="propertyValidators"></param>
-        private static void BuildPropertyValidatorList(Control control,
-                                                       ICollection<ModelPropertyValidator> propertyValidators)
+        private ICollection<ModelPropertyValidator> GetPropertyValidators()
         {
-            ModelPropertyValidator propertyValidator = control as ModelPropertyValidator;
-            if (propertyValidator != null)
+            IEnumerable<ModelPropertyValidator> validators;
+            ModelPage modelPage = Page as ModelPage;
+            if (modelPage != null)
             {
-                propertyValidators.Add(propertyValidator);
+                validators =
+                    modelPage.GetModelValidators(ValidationGroup).OfType<ModelPropertyValidator>();
             }
-            else if (control.HasControls())
+            else
             {
-                foreach (Control c in control.Controls)
-                {
-                    BuildPropertyValidatorList(c, propertyValidators);
-                }
+                validators =
+                    _validatorCollection.OfType<ModelPropertyValidator>().Where(
+                        val => String.Compare(ValidationGroup, val.ValidationGroup) == 0);
             }
+
+            return validators.ToList();
         }
     }
 }

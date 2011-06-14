@@ -1,18 +1,28 @@
 ﻿using System;
-using System.Web.UI;
 
 namespace xVal.WebForms
 {
     // implementing IEquatable<T> so that NUnit Mocking will verify correctly
-    public class ValidationError : Control, IValidator, IEquatable<ValidationError>
+    public class ValidationError : IModelValidator, IEquatable<ValidationError>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationError"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         public ValidationError(string message)
+            : this(message, String.Empty)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidationError"/> class.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="validationGroup">The validation group.</param>
+        public ValidationError(string message, string validationGroup)
         {
             ErrorMessage = message;
+            ValidationGroup = validationGroup;
             IsValid = false;
         }
 
@@ -41,26 +51,18 @@ namespace xVal.WebForms
 
         #endregion
 
-        #region IValidator Members
+        #region IModelValidator Members
 
-        /// <summary>
-        /// When implemented by a class, evaluates the condition it checks and updates the <see cref="P:System.Web.UI.IValidator.IsValid"/> property.
-        /// </summary>
         public void Validate()
         {
+            IsValid = false;
         }
 
-        /// <summary>
-        /// When implemented by a class, gets or sets a value indicating whether the user-entered content in the specified control passes validation.
-        /// </summary>
-        /// <returns>true if the content is valid; otherwise, false.</returns>
         public bool IsValid { get; set; }
 
-        /// <summary>
-        /// When implemented by a class, gets or sets the error message text generated when the condition being validated fails.
-        /// </summary>
-        /// <returns>The error message to generate.</returns>
         public string ErrorMessage { get; set; }
+
+        public string ValidationGroup { get; set; }
 
         #endregion
 

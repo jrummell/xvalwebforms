@@ -60,11 +60,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataAnnotationsValidationRunner.cs" />
+    <Compile Include="IModelValidator.cs" />
+    <Compile Include="IValidationGroup.cs" />
     <Compile Include="IValidationRuleProvider.cs" />
     <Compile Include="IValidationRunner.cs" />
     <Compile Include="IValidationScriptManager.cs" />
     <Compile Include="IValidatorCollection.cs" />
+    <Compile Include="ModelPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="ModelPropertyValidator.cs" />
+    <Compile Include="ModelValidationSummary.cs" />
     <Compile Include="ModelValidator.cs" />
     <Compile Include="ModelValidatorBase.cs" />
     <Compile Include="PageValidatorCollection.cs" />
