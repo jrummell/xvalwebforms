@@ -61,7 +61,7 @@ namespace xVal.WebForms.Tests
             _validator.ModelType = model.GetType().AssemblyQualifiedName;
 
             // we need a naming container
-            LoginView container = new LoginView();
+            ContainerControl container = new ContainerControl();
             container.Controls.Add(new ModelPropertyValidator
                                        {
                                            ModelType = _validator.ModelType,

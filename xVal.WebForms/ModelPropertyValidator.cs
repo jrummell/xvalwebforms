@@ -46,8 +46,11 @@ namespace xVal.WebForms
         /// <value>
         /// The name of the property.
         /// </value>
-	//TODO: use ViewState
-        public string PropertyName { get; set; }
+        public string PropertyName
+        {
+            get { return (string) ViewState["PropertyName"] ?? String.Empty; }
+            set { ViewState["PropertyName"] = value; }
+        }
 
         /// <summary>
         /// Determines whether the control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is a valid control.

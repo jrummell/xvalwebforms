@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.UI.WebControls;
 using Moq;
 using NUnit.Framework;
 
@@ -93,9 +94,63 @@ namespace xVal.WebForms.Tests
         }
 
         [Test]
-        public void Validate()
+        public void ValidateInvalid()
         {
-            throw new NotImplementedException();
+            Booking model = new Booking {ClientName = String.Empty};
+            Type modelType = model.GetType();
+            _validator.ControlToValidate = "txtClientName";
+            const string propertyName = "ClientName";
+            _validator.PropertyName = propertyName;
+            _validator.ModelType = modelType.AssemblyQualifiedName;
+
+            // we need a naming container
+            ContainerControl container = new ContainerControl();
+            container.Controls.Add(new TextBox {ID = _validator.ControlToValidate, Text = model.ClientName});
+            container.Controls.Add(_validator);
+
+            ValidationAttribute[] attributes = new ValidationAttribute[] {new RequiredAttribute()};
+            _mockValidationRunner.Setup(
+                runner => runner.GetValidators(modelType, propertyName)).Returns(
+                    attributes).Verifiable();
+
+            _mockValidationRunner.Setup(runner => runner.Validate(modelType, model.ClientName, propertyName)).Returns(
+                new[] {new ValidationResult("Client name is required")}).Verifiable();
+
+            _validator.Validate();
+
+            Assert.That(_validator.IsValid, Is.False);
+
+            _mockValidationRunner.Verify();
+        }
+
+        [Test]
+        public void ValidateValid()
+        {
+            Booking model = new Booking {ClientName = "Client Name"};
+            Type modelType = model.GetType();
+            _validator.ControlToValidate = "txtClientName";
+            const string propertyName = "ClientName";
+            _validator.PropertyName = propertyName;
+            _validator.ModelType = modelType.AssemblyQualifiedName;
+
+            // we need a naming container
+            ContainerControl container = new ContainerControl();
+            container.Controls.Add(new TextBox {ID = _validator.ControlToValidate, Text = model.ClientName});
+            container.Controls.Add(_validator);
+
+            ValidationAttribute[] attributes = new ValidationAttribute[] {new RequiredAttribute()};
+            _mockValidationRunner.Setup(
+                runner => runner.GetValidators(modelType, propertyName)).Returns(
+                    attributes).Verifiable();
+
+            _mockValidationRunner.Setup(runner => runner.Validate(modelType, model.ClientName, propertyName)).Returns(
+                new ValidationResult[0]).Verifiable();
+
+            _validator.Validate();
+
+            Assert.That(_validator.IsValid, Is.True);
+
+            _mockValidationRunner.Verify();
         }
     }
 }
