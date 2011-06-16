@@ -108,11 +108,6 @@ namespace xVal.WebForms.Tests
             container.Controls.Add(new TextBox {ID = _validator.ControlToValidate, Text = model.ClientName});
             container.Controls.Add(_validator);
 
-            ValidationAttribute[] attributes = new ValidationAttribute[] {new RequiredAttribute()};
-            _mockValidationRunner.Setup(
-                runner => runner.GetValidators(modelType, propertyName)).Returns(
-                    attributes).Verifiable();
-
             _mockValidationRunner.Setup(runner => runner.Validate(modelType, model.ClientName, propertyName)).Returns(
                 new[] {new ValidationResult("Client name is required")}).Verifiable();
 
@@ -137,11 +132,6 @@ namespace xVal.WebForms.Tests
             ContainerControl container = new ContainerControl();
             container.Controls.Add(new TextBox {ID = _validator.ControlToValidate, Text = model.ClientName});
             container.Controls.Add(_validator);
-
-            ValidationAttribute[] attributes = new ValidationAttribute[] {new RequiredAttribute()};
-            _mockValidationRunner.Setup(
-                runner => runner.GetValidators(modelType, propertyName)).Returns(
-                    attributes).Verifiable();
 
             _mockValidationRunner.Setup(runner => runner.Validate(modelType, model.ClientName, propertyName)).Returns(
                 new ValidationResult[0]).Verifiable();

@@ -95,12 +95,6 @@ namespace xVal.WebForms
         /// </returns>
         protected override bool EvaluateIsValid()
         {
-            IEnumerable<ValidationAttribute> attributes = GetValidationAttributes();
-            if (!attributes.Any())
-            {
-                return true;
-            }
-
             Type modelType = GetModelType();
             object value = GetModelPropertyValue(PropertyName, ControlToValidate);
 
