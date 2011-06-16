@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using NUnit.Framework;
@@ -7,9 +8,18 @@ using NUnit.Framework;
 namespace xVal.WebForms.Tests
 {
     [TestFixture]
-    public class DataAnnotationsValidationRunnerFixture
+    public class DataAnnotationsValidationRunnerMetaDataTypeFixture
     {
         private IValidationRunner _validationRunner;
+
+        [TestFixtureSetUp]
+        public void TestFixtureSetUp()
+        {
+            // this required in non-MVC, RIA, DynamicData environments for MetaDataType to work with Validator
+            TypeDescriptor.AddProviderTransparent(
+                new AssociatedMetadataTypeTypeDescriptionProvider(typeof (BookingWithMetadataType), typeof (IBookingMetadataType)),
+                typeof (BookingWithMetadataType));
+        }
 
         [SetUp]
         public void SetUp()
@@ -20,7 +30,7 @@ namespace xVal.WebForms.Tests
         [Test]
         public void Booking_GetErrors_ClientName_Null()
         {
-            Booking instance = new Booking
+            BookingWithMetadataType instance = new BookingWithMetadataType
                                    {
                                        ArrivalDate = new DateTime(2009, 8, 13),
                                        NumberOfGuests = 2
@@ -39,27 +49,9 @@ namespace xVal.WebForms.Tests
         }
 
         [Test]
-        public void BookingWithInternalConstructor_GetErrors_ClientName_Null()
-        {
-            BookingWithInternalConstructor instance = new BookingWithInternalConstructor
-            {
-                ArrivalDate = new DateTime(2009, 8, 13),
-                NumberOfGuests = 2
-            };
-
-            IEnumerable<ValidationResult> errors = _validationRunner.Validate(instance);
-
-            Assert.That(errors.Count(), Is.EqualTo(1));
-
-            ValidationResult errorInfo = errors.First();
-            Assert.That(errorInfo.MemberNames.Contains("ClientName"));
-            Assert.That(errorInfo.ErrorMessage, Is.EqualTo(Booking.ClientNameRequiredMessage));
-        }
-
-        [Test]
         public void Booking_GetErrors_NumberOfGuests_0()
         {
-            Booking instance = new Booking
+            BookingWithMetadataType instance = new BookingWithMetadataType
                                    {
                                        ClientName = "John Doe",
                                        ArrivalDate = new DateTime(2009, 8, 13),
@@ -78,7 +70,7 @@ namespace xVal.WebForms.Tests
         [Test]
         public void Booking_GetErrors_Valid()
         {
-            Booking instance = new Booking
+            BookingWithMetadataType instance = new BookingWithMetadataType
                                    {
                                        ClientName = "John Doe",
                                        ArrivalDate = new DateTime(2009, 8, 13),
@@ -88,41 +80,6 @@ namespace xVal.WebForms.Tests
             IEnumerable<ValidationResult> errors = _validationRunner.Validate(instance);
 
             Assert.That(errors, Is.Empty);
-        }
-
-        [Test]
-        public void BookingManager_PlaceBooking_Valid()
-        {
-            Booking instance = new Booking
-                                   {
-                                       ClientName = "John Doe",
-                                       ArrivalDate = new DateTime(2009, 8, 13),
-                                       NumberOfGuests = 2
-                                   };
-
-            try
-            {
-                // should not throw a ValidationException
-                BookingManager.PlaceBooking(instance);
-            }
-            catch (ValidationException)
-            {
-                Assert.Fail();
-            }
-        }
-
-        [Test, ExpectedException(typeof(ValidationException))]
-        public void BookingManager_PlaceBooking_ArrivalDateSunday()
-        {
-            Booking instance = new Booking
-            {
-                ClientName = "John Doe",
-                ArrivalDate = new DateTime(2009, 8, 9),
-                NumberOfGuests = 2
-            };
-
-            // will throw ValidationException
-            BookingManager.PlaceBooking(instance);
         }
     }
 }

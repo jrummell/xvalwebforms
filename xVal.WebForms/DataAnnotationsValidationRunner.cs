@@ -22,49 +22,10 @@ namespace xVal.WebForms
         /// <returns></returns>
         public IEnumerable<ValidationResult> Validate(object model)
         {
-            return Validate(model, true);
-        }
+            List<ValidationResult> validationResults = new List<ValidationResult>();
+            Validator.TryValidateObject(model, new ValidationContext(model, null, null), validationResults, true);
 
-        /// <summary>
-        /// Validates the specified model.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <param name="validateObject">if set to <c>true</c> and <paramref name="model"/> implements <see cref="IValidatableObject"/>,
-        /// calls <see cref="IValidatableObject.Validate"/> in addition to running all property validation attributes.</param>
-        /// <returns></returns>
-        public IEnumerable<ValidationResult> Validate(object model, bool validateObject)
-        {
-            if (model == null)
-            {
-                throw new ArgumentNullException("model");
-            }
-
-            IEnumerable<ValidationResult> results =
-                from prop in GetProperties(model.GetType())
-                from attribute in GetAttributes(prop)
-                where !attribute.IsValid(prop.GetValue(model))
-                select new ValidationResult(attribute.FormatErrorMessage(String.Empty), new[] {prop.Name});
-
-            if (!validateObject)
-            {
-                return results;
-            }
-
-            List<ValidationResult> resultList = new List<ValidationResult>(results);
-
-            IValidatableObject validatableObject = model as IValidatableObject;
-            if (validatableObject != null)
-            {
-                IEnumerable<ValidationResult> objectResults =
-                    validatableObject.Validate(new ValidationContext(model, null, null));
-
-                if (objectResults.Any())
-                {
-                    resultList.AddRange(objectResults);
-                }
-            }
-
-            return resultList;
+            return validationResults;
         }
 
         /// <summary>
@@ -81,16 +42,13 @@ namespace xVal.WebForms
                 throw new ArgumentNullException("modelType");
             }
 
-            if (String.IsNullOrEmpty(propertyName))
-            {
-                throw new ArgumentException("Value cannot be null or empty.", "propertyName");
-            }
+            object model = Activator.CreateInstance(modelType);
 
-            return from property in GetProperties(modelType)
-                   where property.Name == propertyName
-                   from attribute in GetAttributes(property)
-                   where !attribute.IsValid(propertyValue)
-                   select new ValidationResult(attribute.FormatErrorMessage(String.Empty), new[] {property.Name});
+            List<ValidationResult> validationResults = new List<ValidationResult>();
+            Validator.TryValidateProperty(propertyValue,
+                                          new ValidationContext(model, null, null) {MemberName = propertyName},
+                                          validationResults);
+            return validationResults;
         }
 
         /// <summary>
@@ -109,6 +67,14 @@ namespace xVal.WebForms
             if (String.IsNullOrEmpty(propertyName))
             {
                 throw new ArgumentException("Value cannot be null or empty.", "propertyName");
+            }
+
+            // check for a validation "buddy type"
+            MetadataTypeAttribute metadataTypeAttribute = 
+                TypeDescriptor.GetAttributes(modelType).OfType<MetadataTypeAttribute>().SingleOrDefault();
+            if (metadataTypeAttribute != null)
+            {
+                modelType = metadataTypeAttribute.MetadataClassType;
             }
 
             return from property in GetProperties(modelType)
