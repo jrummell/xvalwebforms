@@ -67,14 +67,24 @@ namespace xVal.WebForms
                 if (model != null)
                 {
                     // set the model with the form values
+                    List<ValidationResult> results = new List<ValidationResult>();
                     foreach (ModelPropertyValidator propertyValidator in validators)
                     {
                         PropertyInfo property = modelType.GetProperty(propertyValidator.PropertyName);
-                        object propertyValue = GetModelPropertyValue(property.Name, propertyValidator.ControlToValidate);
+                        object propertyValue;
+                        try
+                        {
+                            propertyValue = GetModelPropertyValue(property.Name, propertyValidator.ControlToValidate);
+                        }
+                        catch(ValidationException ex)
+                        {
+                            results.Add(ex.ValidationResult);
+                            continue;
+                        }
                         property.SetValue(model, propertyValue, null);
                     }
 
-                    IEnumerable<ValidationResult> results = model.Validate(new ValidationContext(model, null, null));
+                    results.AddRange(model.Validate(new ValidationContext(model, null, null)));
                     foreach (ValidationResult result in results)
                     {
                         _validatorCollection.Add(new ValidationError(result.ErrorMessage, ValidationGroup));
