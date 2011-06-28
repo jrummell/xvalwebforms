@@ -96,7 +96,16 @@ namespace xVal.WebForms
         protected override bool EvaluateIsValid()
         {
             Type modelType = GetModelType();
-            object value = GetModelPropertyValue(PropertyName, ControlToValidate);
+            object value;
+            try
+            {
+                value = GetModelPropertyValue(PropertyName, ControlToValidate);
+            }
+            catch(ValidationException ex)
+            {
+                ErrorMessage = ex.ValidationResult.ErrorMessage;
+                return false;
+            }
 
             IEnumerable<ValidationResult> errors =
                 _validationRunner.Validate(modelType, value, PropertyName);

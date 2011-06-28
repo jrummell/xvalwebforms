@@ -21,7 +21,7 @@ public partial class BookingDemoEnableClientScript : Page
         Booking booking = new Booking
                               {
                                   ClientName = txtClientName.Text,
-                                  NumberOfGuests = Convert.ToInt32(txtNumberOfGuests.Text),
+                                  NumberOfGuests = txtNumberOfGuests.Text.Length > 0 ? Convert.ToInt32(txtNumberOfGuests.Text) : 0,
                                   ArrivalDate = Convert.ToDateTime(txtArrivalDate.Text),
                                   EmailAddress = txtEmailAddress.Text
                               };

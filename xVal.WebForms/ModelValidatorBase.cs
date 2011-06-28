@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Web.Compilation;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -185,16 +186,19 @@ namespace xVal.WebForms
         {
             string stringValue = GetControlValidationValue(valueControlId);
             Type propertyType = GetModelType().GetProperty(propertyName).PropertyType;
+            
             try
             {
                 return Convert.ChangeType(stringValue, propertyType);
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
-                return null;
+                //TODO: use DisplayName instead of PropertyName
+                throw new ValidationException(String.Format("{0} is invalid. {1}", propertyName, ex.Message));
             }
             catch (InvalidCastException)
             {
+                // thrown when stringValue is null
                 return null;
             }
         }

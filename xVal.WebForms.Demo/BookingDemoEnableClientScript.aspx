@@ -8,8 +8,10 @@
         <fieldset class="booking">
             <legend>Booking</legend>
             <asp:ValidationSummary ID="valSummary" runat="server" CssClass="ui-state-error" />
+            <%-- 
             <val:ModelValidator ID="valBooking" runat="server" CssClass="validator" Display="Dynamic"
                 ModelType="xVal.WebForms.Demo.Booking" EnableClientScript="false" />
+                --%>
             <label for="txtClientName">
                 Your name:</label>
             <asp:TextBox ID="txtClientName" runat="server" />
@@ -18,13 +20,13 @@
                 ModelType="xVal.WebForms.Demo.Booking" EnableClientScript="false" />
             <label for="txtNumberOfGuests">
                 Number of guests:</label>
-            <asp:TextBox ID="txtNumberOfGuests" runat="server" CssClass="date-picker" />
+            <asp:TextBox ID="txtNumberOfGuests" runat="server" />
             <val:ModelPropertyValidator ID="valNumberOfGuests" runat="server" CssClass="validator"
                 ControlToValidate="txtNumberOfGuests" Display="Dynamic" PropertyName="NumberOfGuests"
                 ModelType="xVal.WebForms.Demo.Booking" EnableClientScript="false" />
             <label for="txtArrivalDate">
                 Arrival date:</label>
-            <asp:TextBox ID="txtArrivalDate" runat="server" />
+            <asp:TextBox ID="txtArrivalDate" runat="server" CssClass="date-picker" />
             <val:ModelPropertyValidator ID="valArrivalDate" runat="server" CssClass="validator"
                 ControlToValidate="txtArrivalDate" Display="Dynamic" PropertyName="ArrivalDate"
                 ModelType="xVal.WebForms.Demo.Booking" EnableClientScript="false" />

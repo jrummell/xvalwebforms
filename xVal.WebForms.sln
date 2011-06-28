@@ -5,26 +5,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms", "xVal.WebFo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms.Tests", "xVal.WebForms.Tests\xVal.WebForms.Tests.csproj", "{CC3B66CE-C156-4611-AD9E-FFF0D11D1CA4}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "localhost", "http://localhost:1578", "{D00ECCE6-79EB-4D94-992B-4A926641D728}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "localhost", "http://localhost:1092", "{CE7270AB-528F-4A4F-A0E7-2FC1134B07F6}"
 	ProjectSection(WebsiteProperties) = preProject
 		UseIISExpress = "true"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		ProjectReferences = "{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}|xVal.WebForms.dll;"
-		Debug.AspNetCompiler.VirtualPath = "/xVal.WebForms.Demo.WebSite"
-		Debug.AspNetCompiler.PhysicalPath = "xVal.WebForms.Demo.WebSite\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\xVal.WebForms.Demo.WebSite\"
+		Debug.AspNetCompiler.VirtualPath = "/xVal.WebForms.Demo"
+		Debug.AspNetCompiler.PhysicalPath = "xVal.WebForms.Demo\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\xVal.WebForms.Demo\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/xVal.WebForms.Demo.WebSite"
-		Release.AspNetCompiler.PhysicalPath = "xVal.WebForms.Demo.WebSite\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\xVal.WebForms.Demo.WebSite\"
+		Release.AspNetCompiler.VirtualPath = "/xVal.WebForms.Demo"
+		Release.AspNetCompiler.PhysicalPath = "xVal.WebForms.Demo\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\xVal.WebForms.Demo\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		SlnRelativePath = "xVal.WebForms.Demo.WebSite\"
+		SlnRelativePath = "xVal.WebForms.Demo\"
 	EndProjectSection
 EndProject
 Global
@@ -41,10 +41,10 @@ Global
 		{CC3B66CE-C156-4611-AD9E-FFF0D11D1CA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC3B66CE-C156-4611-AD9E-FFF0D11D1CA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC3B66CE-C156-4611-AD9E-FFF0D11D1CA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D00ECCE6-79EB-4D94-992B-4A926641D728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D00ECCE6-79EB-4D94-992B-4A926641D728}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D00ECCE6-79EB-4D94-992B-4A926641D728}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{D00ECCE6-79EB-4D94-992B-4A926641D728}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{CE7270AB-528F-4A4F-A0E7-2FC1134B07F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE7270AB-528F-4A4F-A0E7-2FC1134B07F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE7270AB-528F-4A4F-A0E7-2FC1134B07F6}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE7270AB-528F-4A4F-A0E7-2FC1134B07F6}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
