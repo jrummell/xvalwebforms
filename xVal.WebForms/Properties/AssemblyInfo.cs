@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("xVal.WebForms")]
-[assembly: AssemblyDescription("An attribute based validation framework for WebForms")]
+[assembly: AssemblyDescription("An attribute based validation framework for ASP.NET WebForms")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("John Rummell")]
 [assembly: AssemblyProduct("xVal.WebForms")]
 [assembly: AssemblyCopyright("Copyright © John Rummell")]
 [assembly: AssemblyTrademark("")]
