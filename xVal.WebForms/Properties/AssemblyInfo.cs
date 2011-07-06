@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("An attribute based validation framework for ASP.NET WebForms")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("John Rummell")]
-[assembly: AssemblyProduct("xVal.WebForms")]
+[assembly: AssemblyProduct("xVal for WebForms")]
 [assembly: AssemblyCopyright("Copyright © John Rummell")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
