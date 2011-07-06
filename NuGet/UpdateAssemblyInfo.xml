@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+    <PropertyGroup>
+        <workingPath>$(teamcity_build_workingDir)</workingPath>
+        <version>$(build_number)</version>
+    </PropertyGroup>
+
+    <Target Name="Build" DependsOnTargets="UpdateAssemblyInfo" />
+
+    <Target Name="UpdateAssemblyInfo">
+        <!-- Update AssemblyInfo with TeamCity generated build number -->
+        <AssemblyInfo CodeLanguage="cs"
+                      OutputFile="$(workingPath)\xVal.WebForms\Properties\AssemblyInfo.cs"
+                      AssemblyTitle="xVal.WebForms"
+                      AssemblyDescription="An attribute based validation framework for ASP.NET WebForms"
+                      AssemblyConfiguration=""
+                      AssemblyCompany="John Rummell"
+                      AssemblyProduct="xVal for WebForms"
+                      AssemblyCopyright="Copyright (c) John Rummell"
+                      AssemblyTrademark=""
+                      ComVisible="false"
+                      CLSCompliant="true"
+                      AssemblyVersion="$(version)"
+                      AssemblyFileVersion="1.0.0.0" />
+    </Target>
+
+</Project>
