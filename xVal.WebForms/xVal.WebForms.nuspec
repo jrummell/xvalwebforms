@@ -9,6 +9,9 @@
     <projectUrl>http://xvalwebforms.codeplex.com/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <tags>aspnet validation</tags>
+    <tags>aspnet validation jquery</tags>
+    <dependencies>
+      <dependency id="jQuery.Validation" version="1.8.1" />
+    </dependencies>
   </metadata>
 </package>
