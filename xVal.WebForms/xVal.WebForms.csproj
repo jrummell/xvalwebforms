@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="DataAnnotationsValidationRunner.cs" />
     <Compile Include="IModelValidator.cs" />
+    <Compile Include="ModelPropertyValidator.cs" />
     <Compile Include="ValueTypeAttribute.cs" />
     <Compile Include="IValidationGroup.cs" />
     <Compile Include="IValidationRuleProvider.cs" />
