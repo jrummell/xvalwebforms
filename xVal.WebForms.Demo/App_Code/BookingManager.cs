@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace xVal.WebForms.Tests
+namespace xVal.WebForms.Demo
 {
     public static class BookingManager
     {
@@ -14,6 +14,8 @@ namespace xVal.WebForms.Tests
             {
                 throw new ValidationException(errors.GetErrorMessage());
             }
+
+            // place the booking
         }
     }
 }

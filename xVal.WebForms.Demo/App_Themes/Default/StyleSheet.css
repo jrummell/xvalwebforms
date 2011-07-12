@@ -1,0 +1,24 @@
+﻿.booking label
+{
+    display: block;
+}
+.field-validation-error
+{
+    color: Red;
+    font-style: italic;
+}
+.input-validation-error
+{
+    border: 1px solid #ff0000;
+    background-color: #ffeeee;
+}
+.success
+{
+    padding: .5em;
+    border: solid 1px Green;
+    color: Green;
+}
+label.error
+{
+    color: Red;
+}
