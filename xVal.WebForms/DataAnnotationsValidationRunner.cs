@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -68,9 +69,16 @@ namespace xVal.WebForms
             Validator.TryValidateProperty(propertyValue, context, validationResults);
 
             return validationResults;
+        }
+
+        /// <summary>
+        /// Gets the validators.
+        /// </summary>
         /// <param name="modelType">Type of the model.</param>
         /// <param name="propertyName">Name of the property.</param>
+        /// <returns></returns>
         public IEnumerable<ValidationAttribute> GetValidators(Type modelType, string propertyName)
+        {
             if (modelType == null)
             {
                 throw new ArgumentNullException("modelType");
@@ -92,6 +100,7 @@ namespace xVal.WebForms
             return from property in GetProperties(modelType)
                    where property.Name == propertyName
                    from attribute in GetAttributes(property)
+                   select attribute;
         }
 
         #endregion
