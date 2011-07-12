@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Web.UI.WebControls;
 
 namespace xVal.WebForms
 {
     // implementing IEquatable<T> so that NUnit Mocking will verify correctly
-    public class ValidationError : BaseValidator, IEquatable<ValidationError>
+    public class ValidationError : IModelValidator, IEquatable<ValidationError>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidationError"/> class.
@@ -19,6 +18,7 @@ namespace xVal.WebForms
         /// Initializes a new instance of the <see cref="ValidationError"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <param name="validationGroup">The validation group.</param>
         public ValidationError(string message, string validationGroup)
         {
             ErrorMessage = message;
@@ -42,7 +42,6 @@ namespace xVal.WebForms
             {
                 return false;
             }
-
             if (ReferenceEquals(this, other))
             {
                 return true;
@@ -52,34 +51,20 @@ namespace xVal.WebForms
 
         #endregion
 
-        /// <summary>
-        /// When overridden in a derived class, this method contains the code to determine whether the value in the input control is valid.
-        /// </summary>
-        /// <returns>
-        /// true if the value in the input control is valid; otherwise, false.
-        /// </returns>
-        protected override bool EvaluateIsValid()
+        #region IModelValidator Members
+
+        public void Validate()
         {
-            return false;
+            IsValid = false;
         }
 
-        /// <summary>
-        /// Determines whether the control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is a valid control.
-        /// </summary>
-        /// <returns>
-        /// true if the control specified by <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> is a valid control; otherwise, false.
-        /// </returns>
-        /// <exception cref="T:System.Web.HttpException">
-        /// No value is specified for the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property.
-        /// - or -
-        /// The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property is not found on the page.
-        /// - or -
-        /// The input control specified by the <see cref="P:System.Web.UI.WebControls.BaseValidator.ControlToValidate"/> property does not have a <see cref="T:System.Web.UI.ValidationPropertyAttribute"/> attribute associated with it; therefore, it cannot be validated with a validation control.
-        /// </exception>
-        protected override bool ControlPropertiesValid()
-        {
-            return true;
-        }
+        public bool IsValid { get; set; }
+
+        public string ErrorMessage { get; set; }
+
+        public string ValidationGroup { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
@@ -109,12 +94,11 @@ namespace xVal.WebForms
         }
 
         /// <summary>
-        /// Serves as a hash function for a particular type. 
+        /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
-        /// <filterpriority>2</filterpriority>
         public override int GetHashCode()
         {
             unchecked
