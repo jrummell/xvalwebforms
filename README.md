@@ -1,4 +1,4 @@
-# xvalwebforms
+# xValWebForms
 
 Validate ASP.NET WebForms better with attribute-based rules for server and client side validation. (The project used to be built on xVal, before it was deprecated)
 
