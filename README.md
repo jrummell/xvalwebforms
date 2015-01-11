@@ -13,3 +13,5 @@ Current features (v0.4):
 See our demo on AppHarbor: [xvalwebforms.apphb.com](http://xvalwebforms.apphb.com).
 
 [Documentation](https://github.com/jrummell/xvalwebforms/wiki)
+
+[Blog Posts](http://www.jrummell.com/blog/index.php/tag/xval-webforms)
