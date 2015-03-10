@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms", "xVal.WebForms\xVal.WebForms.csproj", "{E69E89AF-D7BF-48F0-BC33-A555B0302C2E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xVal.WebForms.Tests", "xVal.WebForms.Tests\xVal.WebForms.Tests.csproj", "{CC3B66CE-C156-4611-AD9E-FFF0D11D1CA4}"
