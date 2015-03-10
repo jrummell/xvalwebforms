@@ -1,5 +1,0 @@
-glob:*.user
-relre:[Bb]in
-relre:obj
-glob:*.suo
-glob:packages/NUnit.2.5.10.11092/tools
